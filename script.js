@@ -4,8 +4,9 @@ const ctx = canvas.getContext("2d");
 let width = canvas.width = window.innerWidth;
 let height = canvas.height = window.innerHeight;
 const blobs = [];
-const numBlobs = 12;
+const numBlobs = window.innerWidth < 600 ? 6 : 12;
 
+let lockedHeight = window.innerHeight;
 let floorTop = height * (window.innerWidth < 600 ? 0.85 : 0.75);
 const lightDir = normalize({ x: 1, y: -1 });
 let mouse = { x: width / 2, y: height / 2, active: false };
@@ -31,13 +32,13 @@ class Blob {
     this.vx = 0;
     this.vy = 0;
     this.pinned = pinned;
-    this.mass = this.r * 0.02; // More radius = heavier
+    this.mass = this.r * 0.02;
   }
 
   move() {
     if (this.pinned) return;
 
-    this.vy += 2.5 * this.mass; // gravity based on mass
+    this.vy += 2.5 * this.mass;
 
     if (mouse.active) {
       const dx = mouse.x - this.x;
@@ -136,15 +137,10 @@ function draw() {
 
   ctx.putImageData(image, 0, 0);
 
-    // Amplify small scrolls, dampen big ones
-  scrollVelocity *= 0.9;
-
-  // Apply a softened but boosted scroll force
-  const amplified = -Math.sign(scrollVelocity) * Math.min(6, Math.sqrt(Math.abs(scrollVelocity)) * 1);
-
+  scrollVelocity *= 0.95; // Higher damping
   for (const blob of blobs) {
     if (!blob.pinned) {
-      blob.vy += amplified * 0.5; // More responsive to scroll
+      blob.vy -= scrollVelocity * 0.06; // Reverse + amplify
     }
     blob.move();
   }
@@ -178,12 +174,17 @@ window.addEventListener("touchend", () => {
   mouse.x = Infinity;
   mouse.y = Infinity;
 });
+
 window.addEventListener("resize", () => {
-  width = canvas.width = window.innerWidth;
-  height = canvas.height = window.innerHeight;
-  floorTop = height * (window.innerWidth < 600 ? 0.85 : 0.75);
-  init();
+  if (Math.abs(window.innerHeight - lockedHeight) > 150) {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+    floorTop = height * (window.innerWidth < 600 ? 0.85 : 0.75);
+    lockedHeight = window.innerHeight;
+    init();
+  }
 });
+
 window.addEventListener("scroll", () => {
   const currentY = window.scrollY;
   scrollVelocity = currentY - lastScrollY;
