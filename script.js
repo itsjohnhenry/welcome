@@ -1,13 +1,15 @@
 const canvas = document.getElementById("c");
-const ctx = canvas.getContext("2d");
+const ctx = canvas.getContext("2d", { willReadFrequently: true });
 
-let width = canvas.width = window.innerWidth;
-let height = canvas.height = window.innerHeight;
+let width = window.innerWidth;
+let height = window.innerHeight;
+canvas.width = width;
+canvas.height = height;
+
 const blobs = [];
-const numBlobs = window.innerWidth < 600 ? 6 : 12;
+const numBlobs = 12;
 
-let lockedHeight = window.innerHeight;
-let floorTop = height * (window.innerWidth < 600 ? 0.85 : 0.75);
+let floorTop = height * (width < 600 ? 0.85 : 0.75);
 const lightDir = normalize({ x: 1, y: -1 });
 let mouse = { x: width / 2, y: height / 2, active: false };
 
@@ -25,7 +27,7 @@ function random(min, max) {
 
 class Blob {
   constructor(pinned = false) {
-    const isMobile = window.innerWidth < 600;
+    const isMobile = width < 600;
     this.r = random(isMobile ? 15 : 20, isMobile ? 35 : 60);
     this.x = random(this.r, width - this.r);
     this.y = random(this.r, floorTop - this.r - 20);
@@ -137,10 +139,10 @@ function draw() {
 
   ctx.putImageData(image, 0, 0);
 
-  scrollVelocity *= 0.95; // Higher damping
+  scrollVelocity *= 0.9;
   for (const blob of blobs) {
     if (!blob.pinned) {
-      blob.vy -= scrollVelocity * 0.06; // Reverse + amplify
+      blob.vy -= scrollVelocity * 0.03;
     }
     blob.move();
   }
@@ -151,7 +153,7 @@ function draw() {
 init();
 draw();
 
-// Events
+// Event Listeners
 window.addEventListener("mousemove", e => {
   mouse.x = e.clientX;
   mouse.y = e.clientY;
@@ -174,17 +176,12 @@ window.addEventListener("touchend", () => {
   mouse.x = Infinity;
   mouse.y = Infinity;
 });
-
 window.addEventListener("resize", () => {
-  if (Math.abs(window.innerHeight - lockedHeight) > 150) {
-    width = canvas.width = window.innerWidth;
-    height = canvas.height = window.innerHeight;
-    floorTop = height * (window.innerWidth < 600 ? 0.85 : 0.75);
-    lockedHeight = window.innerHeight;
-    init();
-  }
+  width = canvas.width = window.innerWidth;
+  height = canvas.height = window.innerHeight;
+  floorTop = height * (window.innerWidth < 600 ? 0.85 : 0.75);
+  init();
 });
-
 window.addEventListener("scroll", () => {
   const currentY = window.scrollY;
   scrollVelocity = currentY - lastScrollY;
