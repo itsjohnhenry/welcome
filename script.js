@@ -62,7 +62,7 @@ class Blob {
     if (this.y + this.r > floorTop) {
       const overlap = (this.y + this.r) - floorTop;
       this.y -= overlap;
-      this.vy *= -0.1;
+      this.vy *= -1;
     }
 
     this.x += this.vx;
