@@ -176,11 +176,16 @@ window.addEventListener("touchend", () => {
   mouse.x = Infinity;
   mouse.y = Infinity;
 });
+let lastCanvasWidth = window.innerWidth;
+
 window.addEventListener("resize", () => {
-  width = canvas.width = window.innerWidth;
-  height = canvas.height = window.innerHeight;
-  floorTop = height * (window.innerWidth < 600 ? 0.85 : 0.75);
-  init();
+  if (window.innerWidth !== lastCanvasWidth) {
+    lastCanvasWidth = window.innerWidth;
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+    floorTop = height * (window.innerWidth < 600 ? 0.85 : 0.75);
+    init();
+  }
 });
 window.addEventListener("scroll", () => {
   const currentY = window.scrollY;
