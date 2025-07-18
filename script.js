@@ -5,23 +5,21 @@ const ctx = canvas.getContext("2d");
 const BASE_GRAVITY = 1;            // Gravity strength (multiplied by blob mass)
 const SCROLL_FORCE_MULTIPLIER = 0.9; // How much scroll movement affects blobs
 const SCROLL_DAMPING = 0.9;          // 0 = no scroll retained, 1 = forever retained
-const SCROLL_MAX_FORCE = 1.3;          // Caps how intense the scroll jostle can be
+const SCROLL_MAX_FORCE = 1.3;        // Caps how intense the scroll jostle can be
 
 const BLOB_DAMPING = 0.96;           // Velocity retention per frame (0–1)
 const MOUSE_FORCE = 0.015;           // Attraction strength toward mouse
 const MOUSE_RANGE = 200;             // Max range at which blobs are attracted
 
-const EDGE_FORCE = 0;              // How strongly blobs are repelled from edges
+const EDGE_FORCE = 0;                // How strongly blobs are repelled from edges
 
 // === CANVAS AND BLOBS SETUP === //
-let width = canvas.width = window.innerWidth;
-let height = canvas.height = window.innerHeight;
+let width, height, floorTop;
 const blobs = [];
 const numBlobs = 12;
 
-let floorTop = height * (window.innerWidth < 600 ? 0.85 : 0.75);
 const lightDir = normalize({ x: 1, y: -1 }); // Top-right light direction
-let mouse = { x: width / 2, y: height / 2, active: false };
+let mouse = { x: 0, y: 0, active: false };
 
 let lastScrollY = window.scrollY;
 let scrollVelocity = 0;
@@ -50,10 +48,8 @@ class Blob {
   move() {
     if (this.pinned) return;
 
-    // Gravity
     this.vy += BASE_GRAVITY * this.mass;
 
-    // Mouse attraction
     if (mouse.active) {
       const dx = mouse.x - this.x;
       const dy = mouse.y - this.y;
@@ -65,19 +61,16 @@ class Blob {
       }
     }
 
-    // Edge repulsion
     if (this.x < 0) this.vx += -this.x * EDGE_FORCE;
     if (this.x > width) this.vx -= (this.x - width) * EDGE_FORCE;
     if (this.y < 0) this.vy += -this.y * EDGE_FORCE;
 
-    // Floor collision (no bounce)
     if (this.y + this.r > floorTop) {
       const overlap = (this.y + this.r) - floorTop;
       this.y -= overlap;
       this.vy = 0;
     }
 
-    // Apply velocity and damping
     this.x += this.vx;
     this.y += this.vy;
     this.vx *= BLOB_DAMPING;
@@ -85,14 +78,28 @@ class Blob {
   }
 }
 
+function setCanvasSize() {
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = window.innerWidth * dpr;
+  canvas.height = window.innerHeight * dpr;
+  canvas.style.width = window.innerWidth + 'px';
+  canvas.style.height = window.innerHeight + 'px';
+  ctx.setTransform(1, 0, 0, 1, 0, 0); // reset transform
+  ctx.scale(dpr, dpr);
+
+  width = window.innerWidth;
+  height = window.innerHeight;
+  floorTop = height * (width < 600 ? 0.85 : 0.75);
+}
+
 function init() {
+  setCanvasSize();
   blobs.length = 0;
 
   for (let i = 0; i < numBlobs; i++) {
     blobs.push(new Blob());
   }
 
-  // Create "floor" blobs that pin down the base
   const pinCount = Math.floor(width / 35);
   for (let i = 0; i <= pinCount; i++) {
     const b = new Blob(true);
@@ -149,12 +156,8 @@ function draw() {
 
   ctx.putImageData(image, 0, 0);
 
-  // === Scroll Force Handling === //
   scrollVelocity *= SCROLL_DAMPING;
-
-  const amplified =
-    -Math.sign(scrollVelocity) *
-    Math.min(SCROLL_MAX_FORCE, Math.sqrt(Math.abs(scrollVelocity)));
+  const amplified = -Math.sign(scrollVelocity) * Math.min(SCROLL_MAX_FORCE, Math.sqrt(Math.abs(scrollVelocity)));
 
   for (const blob of blobs) {
     if (!blob.pinned) {
@@ -169,7 +172,6 @@ function draw() {
 init();
 draw();
 
-// === EVENTS === //
 window.addEventListener("mousemove", e => {
   mouse.x = e.clientX;
   mouse.y = e.clientY;
@@ -193,9 +195,6 @@ window.addEventListener("touchend", () => {
   mouse.y = Infinity;
 });
 window.addEventListener("resize", () => {
-  width = canvas.width = window.innerWidth;
-  height = canvas.height = window.innerHeight;
-  floorTop = height * (window.innerWidth < 600 ? 0.85 : 0.75);
   init();
 });
 window.addEventListener("scroll", () => {
