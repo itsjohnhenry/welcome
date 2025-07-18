@@ -1,25 +1,18 @@
 const canvas = document.getElementById("c");
-const ctx = canvas.getContext("2d", { willReadFrequently: true });
+const regl = createREGL({ canvas });
 
 let width = window.innerWidth;
 let height = window.innerHeight;
 canvas.width = width;
 canvas.height = height;
 
+const isMobile = width < 600;
+const floorTop = height * (isMobile ? 0.85 : 0.75);
 const blobs = [];
 const numBlobs = 12;
 
-let floorTop = height * (width < 600 ? 0.85 : 0.75);
-const lightDir = normalize({ x: 1, y: -1 });
-let mouse = { x: width / 2, y: height / 2, active: false };
-
-let lastScrollY = window.scrollY;
 let scrollVelocity = 0;
-
-function normalize(v) {
-  const len = Math.sqrt(v.x * v.x + v.y * v.y) || 1;
-  return { x: v.x / len, y: v.y / len };
-}
+let lastScrollY = window.scrollY;
 
 function random(min, max) {
   return Math.random() * (max - min) + min;
@@ -27,14 +20,13 @@ function random(min, max) {
 
 class Blob {
   constructor(pinned = false) {
-    const isMobile = width < 600;
     this.r = random(isMobile ? 15 : 20, isMobile ? 35 : 60);
     this.x = random(this.r, width - this.r);
     this.y = random(this.r, floorTop - this.r - 20);
     this.vx = 0;
     this.vy = 0;
-    this.pinned = pinned;
     this.mass = this.r * 0.02;
+    this.pinned = pinned;
   }
 
   move() {
@@ -42,37 +34,27 @@ class Blob {
 
     this.vy += 2.5 * this.mass;
 
-    if (mouse.active) {
-      const dx = mouse.x - this.x;
-      const dy = mouse.y - this.y;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      const range = 150;
-      if (dist < range) {
-        const force = (range - dist) / range;
-        this.vx += dx * force * 0.005;
-        this.vy += dy * force * 0.005;
-      }
-    }
-
-    const edgeForce = 0.5;
-    if (this.x < 0) this.vx += -this.x * edgeForce;
-    if (this.x > width) this.vx -= (this.x - width) * edgeForce;
-    if (this.y < 0) this.vy += -this.y * edgeForce;
-
-    if (this.y + this.r > floorTop) {
-      const overlap = (this.y + this.r) - floorTop;
-      this.y -= overlap;
-      this.vy *= -1;
-    }
+    // Apply scroll-based influence
+    this.vy -= scrollVelocity * 0.03;
 
     this.x += this.vx;
     this.y += this.vy;
+
+    // Contain within canvas
+    if (this.x < this.r) this.x = this.r;
+    if (this.x > width - this.r) this.x = width - this.r;
+    if (this.y < this.r) this.y = this.r;
+    if (this.y + this.r > floorTop) {
+      this.y = floorTop - this.r;
+      this.vy = 0;
+    }
+
     this.vx *= 0.98;
     this.vy *= 0.98;
   }
 }
 
-function init() {
+function initBlobs() {
   blobs.length = 0;
 
   for (let i = 0; i < numBlobs; i++) {
@@ -89,106 +71,79 @@ function init() {
   }
 }
 
-function draw() {
-  ctx.fillStyle = "#000";
-  ctx.fillRect(0, 0, width, height);
+initBlobs();
 
-  const topHeight = Math.ceil(floorTop);
-  const image = ctx.createImageData(width, topHeight);
-  const data = image.data;
+const draw = regl({
+  frag: `
+  precision mediump float;
+  varying vec2 uv;
+  uniform vec2 resolution;
+  uniform float floorTop;
 
-  for (let y = 1; y < topHeight - 1; y++) {
-    for (let x = 1; x < width - 1; x++) {
-      const index = (x + y * width) * 4;
-
-      let field = 0;
-      for (const blob of blobs) {
-        const dx = x - blob.x;
-        const dy = y - blob.y;
-        field += (blob.r * blob.r) / (dx * dx + dy * dy + 0.0001);
-      }
-
-      if (field > 1) {
-        let gradX = 0, gradY = 0;
-        for (const blob of blobs) {
-          const dx = x - blob.x;
-          const dy = y - blob.y;
-          const d2 = dx * dx + dy * dy + 0.001;
-          const r2 = blob.r * blob.r;
-          const base = -2 * r2 / (d2 * d2);
-          gradY += base * dx;
-          gradX += base * dy;
-        }
-
-        const gradMag = Math.sqrt(gradX * gradX + gradY * gradY) || 1;
-        const nx = gradX / gradMag;
-        const ny = gradY / gradMag;
-        const dot = Math.max(0, nx * lightDir.x + ny * lightDir.y);
-
-        const feather = Math.min(1.0, (field - 1) * 8);
-        const h = Math.min(255, dot ** 1.5 * 80 * (1 - feather));
-        const c = h;
-
-        data[index] = c;
-        data[index + 1] = c;
-        data[index + 2] = c;
-        data[index + 3] = 255;
-      }
+  void main () {
+    vec2 st = gl_FragCoord.xy / resolution;
+    if (gl_FragCoord.y > floorTop) {
+      gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+      return;
     }
+    float blob = 0.0;
+    ${blobs.map((_, i) => `
+      vec2 p${i} = vec2(${_.x.toFixed(1)}, ${_.y.toFixed(1)});
+      float r${i} = ${_.r.toFixed(1)};
+      blob += r${i} * r${i} / distance(gl_FragCoord.xy, p${i});
+    `).join('')}
+    float v = smoothstep(500.0, 800.0, blob);
+    gl_FragColor = vec4(vec3(v), 1.0);
+  }`,
+
+  vert: `
+  precision mediump float;
+  attribute vec2 position;
+  varying vec2 uv;
+  void main () {
+    uv = 0.5 * (position + 1.0);
+    gl_Position = vec4(position, 0, 1);
+  }`,
+
+  attributes: {
+    position: [
+      [-1, -1],
+      [1, -1],
+      [1, 1],
+      [-1, 1]
+    ]
+  },
+
+  elements: [
+    [0, 1, 2],
+    [2, 3, 0]
+  ],
+
+  uniforms: {
+    resolution: () => [width, height],
+    floorTop: () => floorTop
   }
+});
 
-  ctx.putImageData(image, 0, 0);
-
+regl.frame(() => {
   scrollVelocity *= 0.9;
-  for (const blob of blobs) {
-    if (!blob.pinned) {
-      blob.vy -= scrollVelocity * 0.03;
-    }
+
+  blobs.forEach(blob => {
     blob.move();
-  }
+  });
 
-  requestAnimationFrame(draw);
-}
+  draw();
+});
 
-init();
-draw();
-
-// Event Listeners
-window.addEventListener("mousemove", e => {
-  mouse.x = e.clientX;
-  mouse.y = e.clientY;
-  mouse.active = true;
-});
-window.addEventListener("mouseleave", () => {
-  mouse.active = false;
-  mouse.x = Infinity;
-  mouse.y = Infinity;
-});
-window.addEventListener("touchmove", e => {
-  if (e.touches.length > 0) {
-    mouse.x = e.touches[0].clientX;
-    mouse.y = e.touches[0].clientY;
-    mouse.active = true;
-  }
-}, { passive: true });
-window.addEventListener("touchend", () => {
-  mouse.active = false;
-  mouse.x = Infinity;
-  mouse.y = Infinity;
-});
-let lastCanvasWidth = window.innerWidth;
-
-window.addEventListener("resize", () => {
-  if (window.innerWidth !== lastCanvasWidth) {
-    lastCanvasWidth = window.innerWidth;
-    width = canvas.width = window.innerWidth;
-    height = canvas.height = window.innerHeight;
-    floorTop = height * (window.innerWidth < 600 ? 0.85 : 0.75);
-    init();
-  }
-});
+// Events
 window.addEventListener("scroll", () => {
   const currentY = window.scrollY;
   scrollVelocity = currentY - lastScrollY;
   lastScrollY = currentY;
+});
+
+window.addEventListener("resize", () => {
+  width = canvas.width = window.innerWidth;
+  height = canvas.height = window.innerHeight;
+  initBlobs();
 });
