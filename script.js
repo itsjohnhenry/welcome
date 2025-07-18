@@ -1,11 +1,11 @@
 // === CONFIGURABLE CONSTANTS === //
-const BASE_GRAVITY = 0.1;                 // Gravity strength (multiplied by blob mass)
-const SCROLL_FORCE_MULTIPLIER = 0.6;    // How much scroll movement affects blobs
+const BASE_GRAVITY = 0.01;                 // Gravity strength (multiplied by blob mass)
+const SCROLL_FORCE_MULTIPLIER = 0.03;    // How much scroll movement affects blobs
 const SCROLL_DAMPING = 0.81;             // 0 = no scroll retained, 1 = forever retained
 const SCROLL_MAX_FORCE = 0.5;           // Caps how intense the scroll jostle can be
-const BLOB_DAMPING = 0.96;              // Velocity retention per frame (0–1)
-const MOUSE_FORCE = 0.015;              // Attraction strength toward mouse
-const MOUSE_RANGE = 0;                // Max range at which blobs are attracted
+const BLOB_DAMPING = 0.99;              // Velocity retention per frame (0–1)
+const MOUSE_FORCE = 0.0015;              // Attraction strength toward mouse
+const MOUSE_RANGE = 150;                // Max range at which blobs are attracted
 const EDGE_FORCE = 0.2;                   // How strongly blobs are repelled from edges
 const RENDER_SCALE = 0.5;               // Lower = better performance, 1 = full resolution
 
