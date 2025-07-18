@@ -1,7 +1,7 @@
 // === CONFIGURABLE CONSTANTS === //
 const BASE_GRAVITY = 0.1;                 // Gravity strength (multiplied by blob mass)
 const SCROLL_FORCE_MULTIPLIER = 0.6;    // How much scroll movement affects blobs
-const SCROLL_DAMPING = 0.8;             // 0 = no scroll retained, 1 = forever retained
+const SCROLL_DAMPING = 0.81;             // 0 = no scroll retained, 1 = forever retained
 const SCROLL_MAX_FORCE = 0.5;           // Caps how intense the scroll jostle can be
 const BLOB_DAMPING = 0.96;              // Velocity retention per frame (0–1)
 const MOUSE_FORCE = 0.015;              // Attraction strength toward mouse
@@ -177,13 +177,17 @@ window.addEventListener("touchend", () => {
   mouse.x = Infinity;
   mouse.y = Infinity;
 });
+let lastWidth = window.innerWidth;
+
 window.addEventListener("resize", () => {
-  width = Math.floor(window.innerWidth * RENDER_SCALE);
-  height = Math.floor(window.innerHeight * RENDER_SCALE);
-  canvas.width = width;
-  canvas.height = height;
-  floorTop = height * (window.innerWidth < 600 ? 0.85 : 0.75);
-  init();
+  const newWidth = window.innerWidth;
+  if (newWidth !== lastWidth) {
+    lastWidth = newWidth;
+    width = canvas.width = Math.floor(window.innerWidth * RENDER_SCALE);
+    height = canvas.height = Math.floor(window.innerHeight * RENDER_SCALE);
+    floorTop = height * (window.innerWidth < 600 ? 0.85 : 0.75);
+    init();
+  }
 });
 window.addEventListener("scroll", () => {
   const currentY = window.scrollY;
