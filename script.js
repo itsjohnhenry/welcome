@@ -80,8 +80,8 @@ function setCanvasSize() {
   const dpr = window.devicePixelRatio || 1;
   canvas.width = window.innerWidth * dpr;
   canvas.height = window.innerHeight * dpr;
-  canvas.style.width = window.innerWidth + 'px';
-  canvas.style.height = window.innerHeight + 'px';
+  canvas.style.width = "100vw";
+  canvas.style.height = "100vh";
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.scale(dpr, dpr);
 
@@ -128,9 +128,11 @@ function draw() {
       }
 
       if (field > 1) {
-        const c = Math.min(255, (field - 1) * 255);
-        data[index] = data[index + 1] = data[index + 2] = c;
-        data[index + 3] = 255;
+        // Flat solid fill with fixed colour (e.g. blue)
+        data[index] = 70;    // R
+        data[index + 1] = 130; // G
+        data[index + 2] = 180; // B
+        data[index + 3] = 255; // A
       }
     }
   }
