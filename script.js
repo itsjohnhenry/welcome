@@ -33,7 +33,7 @@ class Blob {
     this.y = rand(100, height - 100);
     this.vx = rand(-1, 1);
     this.vy = rand(-1, 1);
-    this.r = rand(30, 60);
+    this.r = rand(5, 100);
   }
 
   update() {
