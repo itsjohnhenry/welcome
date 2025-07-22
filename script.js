@@ -41,7 +41,9 @@ class Blob {
     this.vy += BASE_GRAVITY;
 
     // Scroll
-    this.vy += scrollVelocity * SCROLL_FORCE;
+    const angle = Math.random() * Math.PI * 2;
+this.vx += Math.cos(angle) * scrollVelocity * SCROLL_FORCE;
+this.vy += Math.sin(angle) * scrollVelocity * SCROLL_FORCE;
 
     // Mouse attraction
     if (mouse.active) {
