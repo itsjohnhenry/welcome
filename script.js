@@ -6,7 +6,7 @@ if (!gl) {
 }
 
 // === CONFIGURABLE CONSTANTS === //
-const NUM_BLOBS = 100;               // Number of moving blobs
+const NUM_BLOBS = 300;               // Number of moving blobs
 const BASE_GRAVITY = 0.3;           // Gravity pull per frame
 const BLOB_DAMPING = 0.99;          // Blob velocity damping
 const MOUSE_FORCE = 50;           // Strength of mouse attraction
@@ -33,7 +33,7 @@ class Blob {
     this.y = rand(100, height - 100);
     this.vx = rand(-1, 1);
     this.vy = rand(-1, 1);
-    this.r = rand(5, 30);
+    this.r = rand(2, 30);
   }
 
   update() {
