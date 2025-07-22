@@ -11,8 +11,8 @@ const BASE_GRAVITY = 0.8;           // Base gravity multiplier
 const BLOB_DAMPING = 0.99;          // Blob velocity damping (0–1)
 const MOUSE_FORCE = 40;             // Strength of mouse attraction
 const MOUSE_RANGE = 150;            // Pixels of mouse influence
-const SCROLL_FORCE = 0.07;          // Scroll-induced jostle force
-const BLOB_COLOR = [0.6, 0.4, 1.0]; // Blob ink colour (RGB black)
+const SCROLL_FORCE = 1.2;          // Scroll-induced jostle force
+const BLOB_COLOR = [0.8, 0.8, 1.0]; // Blob ink colour (RGB black)
 
 // === STATE === //
 let width = canvas.width = window.innerWidth;
