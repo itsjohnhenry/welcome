@@ -11,7 +11,7 @@ const BASE_GRAVITY = 0.1;           // Gravity pull per frame
 const BLOB_DAMPING = 0.99;          // Blob velocity damping
 const MOUSE_FORCE = 20;           // Strength of mouse attraction
 const MOUSE_RANGE = 150;            // Pixels of mouse influence
-const SCROLL_FORCE = 0.1;            // Force added per scroll unit
+const SCROLL_FORCE = 0.03;            // Force added per scroll unit
 
 // === STATE === //
 let width = canvas.width = window.innerWidth;
@@ -33,7 +33,7 @@ class Blob {
     this.y = rand(100, height - 100);
     this.vx = rand(-1, 1);
     this.vy = rand(-1, 1);
-    this.r = rand(0.5, 20);
+    this.r = rand(0.5, 30);
   }
 
   update() {
@@ -97,7 +97,7 @@ const fragmentSrc = `
 
   uniform vec2 u_resolution;
   uniform vec3 u_blobs[${NUM_BLOBS}]; // x, y, radius
-  const vec3 blobColor = vec3(0.2, 0.6, 1.0); // RGB blob colour
+  const vec3 blobColor = vec3(1.2, 1.6, 1.0); // RGB blob colour
 
   void main() {
     vec2 uv = gl_FragCoord.xy;
