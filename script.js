@@ -1,174 +1,156 @@
-const canvas = document.getElementById("c");
-const ctx = canvas.getContext("2d");
+// WebGL Ferrofluid-style Blobs – High Performance
+const canvas = document.getElementById('c');
+const gl = canvas.getContext('webgl');
 
-// === CONFIGURABLE CONSTANTS === //
-const BASE_GRAVITY = 1;              // Gravity strength (multiplied by blob mass)
-const SCROLL_FORCE_MULTIPLIER = 0.9; // How much scroll movement affects blobs
-const SCROLL_DAMPING = 0.9;          // 0 = no scroll retained, 1 = forever retained
-const SCROLL_MAX_FORCE = 1.3;        // Caps how intense the scroll jostle can be
+// Resize canvas to full screen
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
 
-const BLOB_DAMPING = 0.96;           // Velocity retention per frame (0–1)
-const MOUSE_FORCE = 0.015;           // Attraction strength toward mouse
-const MOUSE_RANGE = 200;             // Max range at which blobs are attracted
+// Vertex shader (simple passthrough)
+const vertexShaderSource = `
+attribute vec2 a_position;
+void main() {
+  gl_Position = vec4(a_position, 0, 1);
+}`;
 
-const EDGE_FORCE = 0;                // How strongly blobs are repelled from edges
+// Fragment shader (metaball field + threshold + solid colour)
+const fragmentShaderSource = `
+precision highp float;
+uniform vec2 u_resolution;
+uniform int u_blobCount;
+uniform vec2 u_blobs[100]; // Max 50 blobs (x=px, y=py)
+uniform float u_radii[100];
 
-// === CANVAS AND BLOBS SETUP === //
-let width, height, floorTop;
+void main() {
+  vec2 uv = gl_FragCoord.xy;
+  float field = 0.0;
+
+  for (int i = 0; i < 100; i++) {
+    if (i >= u_blobCount) break;
+    vec2 p = u_blobs[i];
+    float r = u_radii[i];
+    float dx = uv.x - p.x;
+    float dy = uv.y - p.y;
+    field += (r * r) / (dx * dx + dy * dy + 1.0);
+  }
+
+  if (field > 1.0) {
+    gl_FragColor = vec4(0.2, 0.2, 0.2, 1.0); // Dark grey blobs
+  } else {
+    discard;
+  }
+}`;
+
+function createShader(type, source) {
+  const shader = gl.createShader(type);
+  gl.shaderSource(shader, source);
+  gl.compileShader(shader);
+  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+    console.error(gl.getShaderInfoLog(shader));
+    gl.deleteShader(shader);
+    return null;
+  }
+  return shader;
+}
+
+function createProgram(vsSource, fsSource) {
+  const vertexShader = createShader(gl.VERTEX_SHADER, vsSource);
+  const fragmentShader = createShader(gl.FRAGMENT_SHADER, fsSource);
+  const program = gl.createProgram();
+  gl.attachShader(program, vertexShader);
+  gl.attachShader(program, fragmentShader);
+  gl.linkProgram(program);
+  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+    console.error(gl.getProgramInfoLog(program));
+    return null;
+  }
+  return program;
+}
+
+const program = createProgram(vertexShaderSource, fragmentShaderSource);
+
+// Setup full-screen quad
+const positionBuffer = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+const positions = [
+  -1, -1,
+   1, -1,
+  -1,  1,
+  -1,  1,
+   1, -1,
+   1,  1
+];
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+
+const a_position = gl.getAttribLocation(program, 'a_position');
+const u_resolution = gl.getUniformLocation(program, 'u_resolution');
+const u_blobCount = gl.getUniformLocation(program, 'u_blobCount');
+const u_blobs = gl.getUniformLocation(program, 'u_blobs');
+const u_radii = gl.getUniformLocation(program, 'u_radii');
+
+// Blob simulation
 const blobs = [];
-const numBlobs = 22;
+const numBlobs = 16;
+const gravity = 0.8;
+const damping = 0.95;
 
-let mouse = { x: 0, y: 0, active: false };
-let lastScrollY = window.scrollY;
-let scrollVelocity = 0;
-
-function random(min, max) {
-  return Math.random() * (max - min) + min;
+for (let i = 0; i < numBlobs; i++) {
+  blobs.push({
+    x: Math.random() * window.innerWidth,
+    y: Math.random() * window.innerHeight * 0.6,
+    vx: 0,
+    vy: 0,
+    r: Math.random() * 20 + 30
+  });
 }
 
-class Blob {
-  constructor(pinned = false) {
-    const isMobile = window.innerWidth < 600;
-    this.r = random(isMobile ? 25 : 45, isMobile ? 45 : 60);
-    this.x = random(this.r, width - this.r);
-    this.y = random(this.r, floorTop - this.r - 20);
-    this.vx = 0;
-    this.vy = 0;
-    this.pinned = pinned;
-    this.mass = this.r * 0.02;
-  }
+function updateBlobs() {
+  for (const b of blobs) {
+    b.vy += gravity;
+    b.x += b.vx;
+    b.y += b.vy;
 
-  move() {
-    if (this.pinned) return;
-
-    this.vy += BASE_GRAVITY * this.mass;
-
-    if (mouse.active) {
-      const dx = mouse.x - this.x;
-      const dy = mouse.y - this.y;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < MOUSE_RANGE) {
-        const force = (MOUSE_RANGE - dist) / MOUSE_RANGE;
-        this.vx += dx * force * MOUSE_FORCE;
-        this.vy += dy * force * MOUSE_FORCE;
-      }
+    if (b.y + b.r > window.innerHeight * 0.75) {
+      b.y = window.innerHeight * 0.75 - b.r;
+      b.vy = 0;
     }
 
-    if (this.x < 0) this.vx += -this.x * EDGE_FORCE;
-    if (this.x > width) this.vx -= (this.x - width) * EDGE_FORCE;
-    if (this.y < 0) this.vy += -this.y * EDGE_FORCE;
-
-    if (this.y + this.r > floorTop) {
-      const overlap = (this.y + this.r) - floorTop;
-      this.y -= overlap;
-      this.vy = 0;
-    }
-
-    this.x += this.vx;
-    this.y += this.vy;
-    this.vx *= BLOB_DAMPING;
-    this.vy *= BLOB_DAMPING;
+    b.vx *= damping;
+    b.vy *= damping;
   }
 }
 
-function setCanvasSize() {
-  width = window.innerWidth;
-  height = window.innerHeight;
-  canvas.width = width;
-  canvas.height = height;
-  floorTop = height * (width < 600 ? 0.85 : 0.75);
+function render() {
+  updateBlobs();
+
+  gl.clear(gl.COLOR_BUFFER_BIT);
+  gl.useProgram(program);
+
+  gl.enableVertexAttribArray(a_position);
+  gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+  gl.vertexAttribPointer(a_position, 2, gl.FLOAT, false, 0, 0);
+
+  gl.uniform2f(u_resolution, canvas.width, canvas.height);
+  gl.uniform1i(u_blobCount, blobs.length);
+
+  const blobArray = new Float32Array(200);
+  const radiusArray = new Float32Array(100);
+  for (let i = 0; i < blobs.length; i++) {
+    blobArray[i * 2] = blobs[i].x;
+    blobArray[i * 2 + 1] = canvas.height - blobs[i].y;
+    radiusArray[i] = blobs[i].r;
+  }
+
+  gl.uniform2fv(u_blobs, blobArray);
+  gl.uniform1fv(u_radii, radiusArray);
+
+  gl.drawArrays(gl.TRIANGLES, 0, 6);
+  requestAnimationFrame(render);
 }
 
-function init() {
-  setCanvasSize();
-  blobs.length = 0;
-
-  for (let i = 0; i < numBlobs; i++) {
-    blobs.push(new Blob());
-  }
-
-  const pinCount = Math.floor(width / 35);
-  for (let i = 0; i <= pinCount; i++) {
-    const b = new Blob(true);
-    b.r = 50;
-    b.x = (i / pinCount) * width;
-    b.y = floorTop;
-    blobs.push(b);
-  }
-}
-
-function draw() {
-  ctx.fillStyle = "#fff";
-  ctx.fillRect(0, 0, width, height);
-
-  const image = ctx.getImageData(0, 0, width, floorTop);
-  const data = image.data;
-
-  for (let y = 1; y < floorTop - 1; y++) {
-    for (let x = 1; x < width - 1; x++) {
-      const index = (x + y * width) * 4;
-      let field = 0;
-
-      for (const blob of blobs) {
-        const dx = x - blob.x;
-        const dy = y - blob.y;
-        field += (blob.r * blob.r) / (dx * dx + dy * dy + 0.0001);
-      }
-
-      if (field > 1) {
-        data[index] = 0;      // R
-        data[index + 1] = 0;  // G
-        data[index + 2] = 0;  // B
-        data[index + 3] = 255;// A
-      }
-    }
-  }
-
-  ctx.putImageData(image, 0, 0);
-
-  scrollVelocity *= SCROLL_DAMPING;
-  const amplified = -Math.sign(scrollVelocity) * Math.min(SCROLL_MAX_FORCE, Math.sqrt(Math.abs(scrollVelocity)));
-
-  for (const blob of blobs) {
-    if (!blob.pinned) {
-      blob.vy += amplified * SCROLL_FORCE_MULTIPLIER;
-    }
-    blob.move();
-  }
-
-  requestAnimationFrame(draw);
-}
-
-init();
-draw();
-
-window.addEventListener("mousemove", e => {
-  mouse.x = e.clientX;
-  mouse.y = e.clientY;
-  mouse.active = true;
-});
-window.addEventListener("mouseleave", () => {
-  mouse.active = false;
-  mouse.x = Infinity;
-  mouse.y = Infinity;
-});
-window.addEventListener("touchmove", e => {
-  if (e.touches.length > 0) {
-    mouse.x = e.touches[0].clientX;
-    mouse.y = e.touches[0].clientY;
-    mouse.active = true;
-  }
-}, { passive: true });
-window.addEventListener("touchend", () => {
-  mouse.active = false;
-  mouse.x = Infinity;
-  mouse.y = Infinity;
-});
-window.addEventListener("resize", () => {
-  init();
-});
-window.addEventListener("scroll", () => {
-  const currentY = window.scrollY;
-  scrollVelocity = currentY - lastScrollY;
-  lastScrollY = currentY;
-});
+render();
