@@ -97,7 +97,7 @@ const fragmentSrc = `
 
   uniform vec2 u_resolution;
   uniform vec3 u_blobs[${NUM_BLOBS}]; // x, y, radius
-  const vec3 blobColor = vec3(1.2, 1.6, 1.0); // RGB blob colour
+  const vec3 blobColor = vec3(1.0, 1.0, 1.0); // RGB blob colour
 
   void main() {
     vec2 uv = gl_FragCoord.xy;
