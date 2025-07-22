@@ -13,7 +13,7 @@ const MOUSE_RANGE = 200;             // Max range at which blobs are attracted
 
 const EDGE_FORCE = 0;                // How strongly blobs are repelled from edges
 
-const COLOUR = { r: 70, g: 130, b: 180 }; // Fixed RGB colour
+const COLOUR = { r: 170, g: 130, b: 180 }; // Fixed RGB colour
 
 // === CANVAS AND BLOBS SETUP === //
 let width, height, floorTop;
