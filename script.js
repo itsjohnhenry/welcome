@@ -7,12 +7,12 @@ if (!gl) {
 
 // === CONFIGURABLE CONSTANTS === //
 const NUM_BLOBS = 600;               // Number of moving blobs
-const BASE_GRAVITY = 0.6;           // Base gravity multiplier
+const BASE_GRAVITY = 0.3;           // Base gravity multiplier
 const BLOB_DAMPING = 0.97;          // Blob velocity damping (0–1)
 const MOUSE_FORCE = 40;             // Strength of mouse attraction
 const MOUSE_RANGE = 350;            // Pixels of mouse influence
-const SCROLL_FORCE = 0.3;          // Scroll-induced jostle force
-const BLOB_COLOR = [0.8, 0.6, 1.0]; // Blob ink colour (RGB black)
+const SCROLL_FORCE = 0.5;          // Scroll-induced jostle force
+const BLOB_COLOR = [0.4, 0.6, 1.0]; // Blob ink colour (RGB black)
 
 // === STATE === //
 let width = canvas.width = window.innerWidth;
