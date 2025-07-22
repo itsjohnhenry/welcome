@@ -1,182 +1,220 @@
 const canvas = document.getElementById("c");
 const gl = canvas.getContext("webgl");
 
-// === CONFIGURABLE CONSTANTS === //
-const NUM_BLOBS = 12;
-const BLOB_RADIUS = 0.08; // Radius of the blobs in clip space
-const BLOB_DAMPING = 0.98; // Movement damping per frame
-const BASE_GRAVITY = 0.0015; // ↓ Gravity strength
-const MOUSE_FORCE = 0.005;   // ←→ Strength of mouse attraction
-const MOUSE_RANGE = 0.4;     // Mouse influence radius
-const SCROLL_FORCE = 0.05;   // ↑↓ Scroll force on blobs
-
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-gl.viewport(0, 0, canvas.width, canvas.height);
-
-gl.clearColor(1, 1, 1, 1);
-gl.clear(gl.COLOR_BUFFER_BIT);
-
-let mouse = { x: 0, y: 0, active: false };
-let lastScrollY = window.scrollY;
-let scrollVelocity = 0;
-
-// Convert pixel to clip space
-function toClip(x, y) {
-  return {
-    x: (x / canvas.width) * 2 - 1,
-    y: -((y / canvas.height) * 2 - 1)
-  };
+if (!gl) {
+  alert("WebGL not supported");
 }
 
-// === BLOB SETUP === //
+// === CONFIGURABLE CONSTANTS === //
+const NUM_BLOBS = 15;               // Number of moving blobs
+const BASE_GRAVITY = 0.3;           // Gravity pull per frame
+const BLOB_DAMPING = 0.95;          // Blob velocity damping
+const MOUSE_FORCE = 2000;           // Strength of mouse attraction
+const MOUSE_RANGE = 150;            // Pixels of mouse influence
+const SCROLL_FORCE = 10;            // Force added per scroll unit
+
+// === STATE === //
+let width = canvas.width = window.innerWidth;
+let height = canvas.height = window.innerHeight;
+
+let mouse = { x: width / 2, y: height / 2, active: false };
+let scrollVelocity = 0;
+let lastScrollY = window.scrollY;
+
+const blobs = [];
+
+function rand(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
 class Blob {
   constructor() {
-    this.x = Math.random() * 2 - 1;
-    this.y = Math.random() * 1.5 - 1;
-    this.vx = 0;
-    this.vy = 0;
+    this.x = rand(100, width - 100);
+    this.y = rand(100, height - 100);
+    this.vx = rand(-1, 1);
+    this.vy = rand(-1, 1);
+    this.r = rand(30, 60);
   }
 
   update() {
     // Gravity
-    this.vy -= BASE_GRAVITY;
+    this.vy += BASE_GRAVITY;
 
-    // Mouse interaction
+    // Scroll
+    this.vy += scrollVelocity * SCROLL_FORCE;
+
+    // Mouse attraction
     if (mouse.active) {
       const dx = mouse.x - this.x;
       const dy = mouse.y - this.y;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < MOUSE_RANGE) {
-        const force = (MOUSE_RANGE - dist) / MOUSE_RANGE;
-        this.vx += dx * force * MOUSE_FORCE;
-        this.vy += dy * force * MOUSE_FORCE;
+      const dist2 = dx * dx + dy * dy;
+      if (dist2 < MOUSE_RANGE * MOUSE_RANGE) {
+        const force = MOUSE_FORCE / (dist2 + 1);
+        this.vx += dx * force;
+        this.vy += dy * force;
       }
     }
 
-    // Scroll force
-    this.vy += scrollVelocity * SCROLL_FORCE;
-
-    // Apply velocity
+    // Movement
     this.x += this.vx;
     this.y += this.vy;
+
+    // Containment
+    if (this.x - this.r < 0) {
+      this.x = this.r;
+      this.vx *= -0.5;
+    } else if (this.x + this.r > width) {
+      this.x = width - this.r;
+      this.vx *= -0.5;
+    }
+
+    if (this.y - this.r < 0) {
+      this.y = this.r;
+      this.vy *= -0.5;
+    } else if (this.y + this.r > height) {
+      this.y = height - this.r;
+      this.vy *= -0.5;
+    }
+
+    // Damping
     this.vx *= BLOB_DAMPING;
     this.vy *= BLOB_DAMPING;
-
-    // Boundary wrap
-    if (this.x < -1) this.x = 1;
-    if (this.x > 1) this.x = -1;
-    if (this.y < -1) this.y = 1;
-    if (this.y > 1) this.y = -1;
   }
 }
 
-const blobs = Array.from({ length: NUM_BLOBS }, () => new Blob());
-
-// === SHADER SETUP === //
-const vertexShaderSource = `
-attribute vec2 position;
-void main() {
-  gl_Position = vec4(position, 0, 1);
-}`;
-
-const fragmentShaderSource = `
-precision mediump float;
-uniform vec2 uBlobs[${NUM_BLOBS}];
-
-void main() {
-  float field = 0.0;
-  for (int i = 0; i < ${NUM_BLOBS}; i++) {
-    vec2 diff = gl_FragCoord.xy / vec2(${canvas.width.toFixed(1)}, ${canvas.height.toFixed(1)}) * 2.0 - 1.0 - uBlobs[i];
-    float d = dot(diff, diff);
-    field += ${BLOB_RADIUS * BLOB_RADIUS} / (d + 0.001);
+// === SHADERS === //
+const vertexSrc = `
+  attribute vec2 a_position;
+  void main() {
+    gl_Position = vec4(a_position, 0, 1);
   }
+`;
 
-  if (field > 1.0) {
-    gl_FragColor = vec4(0.2, 0.5, 0.8, 1.0); // Blob colour
-  } else {
-    discard;
+const fragmentSrc = `
+  precision mediump float;
+
+  uniform vec2 u_resolution;
+  uniform vec3 u_blobs[${NUM_BLOBS}]; // x, y, radius
+  const vec3 blobColor = vec3(0.2, 0.6, 1.0); // RGB blob colour
+
+  void main() {
+    vec2 uv = gl_FragCoord.xy;
+    float sum = 0.0;
+
+    for (int i = 0; i < ${NUM_BLOBS}; i++) {
+      vec3 b = u_blobs[i];
+      float dx = uv.x - b.x;
+      float dy = uv.y - b.y;
+      float d2 = dx * dx + dy * dy + 1.0;
+      sum += (b.z * b.z) / d2;
+    }
+
+    if (sum > 1.0) {
+      gl_FragColor = vec4(blobColor, 1.0);
+    } else {
+      discard;
+    }
   }
-}`;
+`;
 
-function createShader(type, source) {
+// === COMPILE SHADERS === //
+function compileShader(type, src) {
   const shader = gl.createShader(type);
-  gl.shaderSource(shader, source);
+  gl.shaderSource(shader, src);
   gl.compileShader(shader);
+  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+    console.error(gl.getShaderInfoLog(shader));
+  }
   return shader;
 }
 
+const vertexShader = compileShader(gl.VERTEX_SHADER, vertexSrc);
+const fragmentShader = compileShader(gl.FRAGMENT_SHADER, fragmentSrc);
+
 const program = gl.createProgram();
-gl.attachShader(program, createShader(gl.VERTEX_SHADER, vertexShaderSource));
-gl.attachShader(program, createShader(gl.FRAGMENT_SHADER, fragmentShaderSource));
+gl.attachShader(program, vertexShader);
+gl.attachShader(program, fragmentShader);
 gl.linkProgram(program);
 gl.useProgram(program);
 
-// Quad covering entire screen
-const vertices = new Float32Array([
-  -1, -1, 1, -1, -1, 1,
-   1, -1, 1,  1, -1, 1
+// === SETUP BUFFERS === //
+const quad = new Float32Array([
+  -1, -1,
+   1, -1,
+  -1,  1,
+  -1,  1,
+   1, -1,
+   1,  1
 ]);
 
+const positionLoc = gl.getAttribLocation(program, "a_position");
 const buffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+gl.bufferData(gl.ARRAY_BUFFER, quad, gl.STATIC_DRAW);
+gl.enableVertexAttribArray(positionLoc);
+gl.vertexAttribPointer(positionLoc, 2, gl.FLOAT, false, 0, 0);
 
-const position = gl.getAttribLocation(program, "position");
-gl.enableVertexAttribArray(position);
-gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
+// === UNIFORM LOCATIONS === //
+const resolutionLoc = gl.getUniformLocation(program, "u_resolution");
+const blobsLoc = gl.getUniformLocation(program, "u_blobs");
 
-const uBlobs = gl.getUniformLocation(program, "uBlobs");
-
-// === ANIMATION LOOP === //
-function draw() {
-  scrollVelocity *= 0.9;
-  gl.clear(gl.COLOR_BUFFER_BIT);
-
-  blobs.forEach(b => b.update());
-  const blobData = [];
-  blobs.forEach(b => blobData.push(b.x, b.y));
-  gl.uniform2fv(uBlobs, new Float32Array(blobData));
-
-  gl.drawArrays(gl.TRIANGLES, 0, 6);
-  requestAnimationFrame(draw);
+// === INIT BLOBS === //
+for (let i = 0; i < NUM_BLOBS; i++) {
+  blobs.push(new Blob());
 }
 
-requestAnimationFrame(draw);
+// === RENDER LOOP === //
+function render() {
+  gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+  gl.clearColor(1, 1, 1, 1); // White background
+  gl.clear(gl.COLOR_BUFFER_BIT);
+
+  // Update blobs
+  for (const blob of blobs) {
+    blob.update();
+  }
+
+  // Send blob data to GPU
+  const blobData = [];
+  for (const b of blobs) {
+    blobData.push(b.x, height - b.y, b.r);
+  }
+
+  gl.uniform2f(resolutionLoc, width, height);
+  gl.uniform3fv(blobsLoc, new Float32Array(blobData));
+  gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+  scrollVelocity *= 0.9; // Damp scroll
+  requestAnimationFrame(render);
+}
+
+requestAnimationFrame(render);
 
 // === EVENTS === //
 window.addEventListener("mousemove", e => {
-  const clip = toClip(e.clientX, e.clientY);
-  mouse.x = clip.x;
-  mouse.y = clip.y;
+  mouse.x = e.clientX;
+  mouse.y = e.clientY;
   mouse.active = true;
 });
-
 window.addEventListener("mouseleave", () => {
   mouse.active = false;
 });
-
 window.addEventListener("touchmove", e => {
   if (e.touches.length > 0) {
-    const clip = toClip(e.touches[0].clientX, e.touches[0].clientY);
-    mouse.x = clip.x;
-    mouse.y = clip.y;
+    mouse.x = e.touches[0].clientX;
+    mouse.y = e.touches[0].clientY;
     mouse.active = true;
   }
 }, { passive: true });
-
 window.addEventListener("touchend", () => {
   mouse.active = false;
 });
-
-window.addEventListener("scroll", () => {
-  const y = window.scrollY;
-  scrollVelocity = y - lastScrollY;
-  lastScrollY = y;
-});
-
 window.addEventListener("resize", () => {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  gl.viewport(0, 0, canvas.width, canvas.height);
+  width = canvas.width = window.innerWidth;
+  height = canvas.height = window.innerHeight;
+});
+window.addEventListener("scroll", () => {
+  const currentY = window.scrollY;
+  scrollVelocity = currentY - lastScrollY;
+  lastScrollY = currentY;
 });
