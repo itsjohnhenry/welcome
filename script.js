@@ -39,7 +39,7 @@ class Blob {
 
   update() {
     // Gravity (scaled by blob size)
-    const gravity = BASE_GRAVITY * (this.r / 30);
+    const gravity = BASE_GRAVITY * (this.r / 10);
     this.vy += gravity;
 
     // Scroll jostle
