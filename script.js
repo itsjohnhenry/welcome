@@ -16,7 +16,7 @@ const EDGE_FORCE = 0;                // How strongly blobs are repelled from edg
 // === CANVAS AND BLOBS SETUP === //
 let width, height, floorTop;
 const blobs = [];
-const numBlobs = 12;
+const numBlobs = 22;
 
 let mouse = { x: 0, y: 0, active: false };
 let lastScrollY = window.scrollY;
