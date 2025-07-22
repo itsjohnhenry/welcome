@@ -74,7 +74,7 @@ class Blob {
 }
 
 function setCanvasSize() {
-  const dpr = window.devicePixelRatio || 1;
+  const dpr = 0.5;
   canvas.width = window.innerWidth * dpr;
   canvas.height = window.innerHeight * dpr;
   canvas.style.width = "100vw";
@@ -109,7 +109,7 @@ function draw() {
   ctx.fillStyle = "#000";
   ctx.fillRect(0, 0, width, height);
 
-  const dpr = window.devicePixelRatio || 1;
+  const dpr = 0.5;
   const pixelWidth = canvas.width;
   const pixelHeight = Math.ceil(floorTop * dpr);
 
