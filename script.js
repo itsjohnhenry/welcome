@@ -13,8 +13,6 @@ const MOUSE_RANGE = 200;             // Max range at which blobs are attracted
 
 const EDGE_FORCE = 0;                // How strongly blobs are repelled from edges
 
-const COLOUR = { r: 170, g: 130, b: 180 }; // Fixed RGB colour
-
 // === CANVAS AND BLOBS SETUP === //
 let width, height, floorTop;
 const blobs = [];
@@ -74,16 +72,10 @@ class Blob {
 }
 
 function setCanvasSize() {
-  const dpr = 0.5;
-  canvas.width = window.innerWidth * dpr;
-  canvas.height = window.innerHeight * dpr;
-  canvas.style.width = "100vw";
-  canvas.style.height = "100vh";
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
-  ctx.scale(dpr, dpr);
-
   width = window.innerWidth;
   height = window.innerHeight;
+  canvas.width = width;
+  canvas.height = height;
   floorTop = height * (width < 600 ? 0.85 : 0.75);
 }
 
@@ -106,34 +98,28 @@ function init() {
 }
 
 function draw() {
-  ctx.fillStyle = "#000";
+  ctx.fillStyle = "#fff";
   ctx.fillRect(0, 0, width, height);
 
-  const dpr = 0.5;
-  const pixelWidth = canvas.width;
-  const pixelHeight = Math.ceil(floorTop * dpr);
-
-  const image = ctx.createImageData(pixelWidth, pixelHeight);
+  const image = ctx.getImageData(0, 0, width, floorTop);
   const data = image.data;
 
-  for (let y = 1; y < image.height - 1; y++) {
-    for (let x = 1; x < image.width - 1; x++) {
-      const index = (x + y * image.width) * 4;
-      const cx = x / dpr;
-      const cy = y / dpr;
-
+  for (let y = 1; y < floorTop - 1; y++) {
+    for (let x = 1; x < width - 1; x++) {
+      const index = (x + y * width) * 4;
       let field = 0;
+
       for (const blob of blobs) {
-        const dx = cx - blob.x;
-        const dy = cy - blob.y;
+        const dx = x - blob.x;
+        const dy = y - blob.y;
         field += (blob.r * blob.r) / (dx * dx + dy * dy + 0.0001);
       }
 
       if (field > 1) {
-        data[index]     = COLOUR.r;
-        data[index + 1] = COLOUR.g;
-        data[index + 2] = COLOUR.b;
-        data[index + 3] = 255;
+        data[index] = 0;      // R
+        data[index + 1] = 0;  // G
+        data[index + 2] = 0;  // B
+        data[index + 3] = 255;// A
       }
     }
   }
@@ -156,7 +142,6 @@ function draw() {
 init();
 draw();
 
-// === EVENT LISTENERS === //
 window.addEventListener("mousemove", e => {
   mouse.x = e.clientX;
   mouse.y = e.clientY;
@@ -179,7 +164,9 @@ window.addEventListener("touchend", () => {
   mouse.x = Infinity;
   mouse.y = Infinity;
 });
-window.addEventListener("resize", init);
+window.addEventListener("resize", () => {
+  init();
+});
 window.addEventListener("scroll", () => {
   const currentY = window.scrollY;
   scrollVelocity = currentY - lastScrollY;
