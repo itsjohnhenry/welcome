@@ -7,11 +7,12 @@ if (!gl) {
 
 // === CONFIGURABLE CONSTANTS === //
 const NUM_BLOBS = 600;               // Number of moving blobs
-const BASE_GRAVITY = 0.1;           // Gravity pull per frame
-const BLOB_DAMPING = 0.99;          // Blob velocity damping
-const MOUSE_FORCE = 20;           // Strength of mouse attraction
+const BASE_GRAVITY = 0.1;           // Base gravity multiplier
+const BLOB_DAMPING = 0.99;          // Blob velocity damping (0–1)
+const MOUSE_FORCE = 20;             // Strength of mouse attraction
 const MOUSE_RANGE = 150;            // Pixels of mouse influence
-const SCROLL_FORCE = 0.03;            // Force added per scroll unit
+const SCROLL_FORCE = 0.03;          // Scroll-induced jostle force
+const BLOB_COLOR = [0.0, 0.0, 0.0]; // Blob ink colour (RGB black)
 
 // === STATE === //
 let width = canvas.width = window.innerWidth;
@@ -33,17 +34,18 @@ class Blob {
     this.y = rand(100, height - 100);
     this.vx = rand(-1, 1);
     this.vy = rand(-1, 1);
-    this.r = rand(0.5, 30);
+    this.r = rand(0.5, 30); // Blob radius
   }
 
   update() {
-    // Gravity
-    this.vy += BASE_GRAVITY;
+    // Gravity (scaled by blob size)
+    const gravity = BASE_GRAVITY * (this.r / 30);
+    this.vy += gravity;
 
-    // Scroll
+    // Scroll jostle
     const angle = Math.random() * Math.PI * 2;
-this.vx += Math.cos(angle) * scrollVelocity * SCROLL_FORCE;
-this.vy += Math.sin(angle) * scrollVelocity * SCROLL_FORCE;
+    this.vx += Math.cos(angle) * scrollVelocity * SCROLL_FORCE;
+    this.vy += Math.sin(angle) * scrollVelocity * SCROLL_FORCE;
 
     // Mouse attraction
     if (mouse.active) {
@@ -96,8 +98,8 @@ const fragmentSrc = `
   precision mediump float;
 
   uniform vec2 u_resolution;
-  uniform vec3 u_blobs[${NUM_BLOBS}]; // x, y, radius
-  const vec3 blobColor = vec3(1.0, 1.0, 1.0); // RGB blob colour
+  uniform vec3 u_blobs[${NUM_BLOBS}];
+  const vec3 blobColor = vec3(${BLOB_COLOR.join(", ")});
 
   void main() {
     vec2 uv = gl_FragCoord.xy;
@@ -168,25 +170,19 @@ for (let i = 0; i < NUM_BLOBS; i++) {
 // === RENDER LOOP === //
 function render() {
   gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
-  gl.clearColor(1, 1, 1, 1); // White background
+  gl.clearColor(1, 1, 1, 1);
   gl.clear(gl.COLOR_BUFFER_BIT);
 
-  // Update blobs
-  for (const blob of blobs) {
-    blob.update();
-  }
+  for (const blob of blobs) blob.update();
 
-  // Send blob data to GPU
   const blobData = [];
-  for (const b of blobs) {
-    blobData.push(b.x, height - b.y, b.r);
-  }
+  for (const b of blobs) blobData.push(b.x, height - b.y, b.r);
 
   gl.uniform2f(resolutionLoc, width, height);
   gl.uniform3fv(blobsLoc, new Float32Array(blobData));
   gl.drawArrays(gl.TRIANGLES, 0, 6);
 
-  scrollVelocity *= 0.9; // Damp scroll
+  scrollVelocity *= 0.9;
   requestAnimationFrame(render);
 }
 
