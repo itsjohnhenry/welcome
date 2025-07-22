@@ -1,46 +1,99 @@
-// WebGL Ferrofluid-style Blobs – High Performance
-const canvas = document.getElementById('c');
-const gl = canvas.getContext('webgl');
+const canvas = document.getElementById("c");
+const gl = canvas.getContext("webgl");
 
-// Resize canvas to full screen
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+// === CONFIGURABLE CONSTANTS === //
+const NUM_BLOBS = 12;
+const BLOB_RADIUS = 0.08; // Radius of the blobs in clip space
+const BLOB_DAMPING = 0.98; // Movement damping per frame
+const BASE_GRAVITY = 0.0015; // ↓ Gravity strength
+const MOUSE_FORCE = 0.005;   // ←→ Strength of mouse attraction
+const MOUSE_RANGE = 0.4;     // Mouse influence radius
+const SCROLL_FORCE = 0.05;   // ↑↓ Scroll force on blobs
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+gl.viewport(0, 0, canvas.width, canvas.height);
+
+gl.clearColor(1, 1, 1, 1);
+gl.clear(gl.COLOR_BUFFER_BIT);
+
+let mouse = { x: 0, y: 0, active: false };
+let lastScrollY = window.scrollY;
+let scrollVelocity = 0;
+
+// Convert pixel to clip space
+function toClip(x, y) {
+  return {
+    x: (x / canvas.width) * 2 - 1,
+    y: -((y / canvas.height) * 2 - 1)
+  };
 }
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
 
-// Vertex shader (simple passthrough)
+// === BLOB SETUP === //
+class Blob {
+  constructor() {
+    this.x = Math.random() * 2 - 1;
+    this.y = Math.random() * 1.5 - 1;
+    this.vx = 0;
+    this.vy = 0;
+  }
+
+  update() {
+    // Gravity
+    this.vy -= BASE_GRAVITY;
+
+    // Mouse interaction
+    if (mouse.active) {
+      const dx = mouse.x - this.x;
+      const dy = mouse.y - this.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < MOUSE_RANGE) {
+        const force = (MOUSE_RANGE - dist) / MOUSE_RANGE;
+        this.vx += dx * force * MOUSE_FORCE;
+        this.vy += dy * force * MOUSE_FORCE;
+      }
+    }
+
+    // Scroll force
+    this.vy += scrollVelocity * SCROLL_FORCE;
+
+    // Apply velocity
+    this.x += this.vx;
+    this.y += this.vy;
+    this.vx *= BLOB_DAMPING;
+    this.vy *= BLOB_DAMPING;
+
+    // Boundary wrap
+    if (this.x < -1) this.x = 1;
+    if (this.x > 1) this.x = -1;
+    if (this.y < -1) this.y = 1;
+    if (this.y > 1) this.y = -1;
+  }
+}
+
+const blobs = Array.from({ length: NUM_BLOBS }, () => new Blob());
+
+// === SHADER SETUP === //
 const vertexShaderSource = `
-attribute vec2 a_position;
+attribute vec2 position;
 void main() {
-  gl_Position = vec4(a_position, 0, 1);
+  gl_Position = vec4(position, 0, 1);
 }`;
 
-// Fragment shader (metaball field + threshold + solid colour)
 const fragmentShaderSource = `
-precision highp float;
-uniform vec2 u_resolution;
-uniform int u_blobCount;
-uniform vec2 u_blobs[100]; // Max 50 blobs (x=px, y=py)
-uniform float u_radii[100];
+precision mediump float;
+uniform vec2 uBlobs[${NUM_BLOBS}];
 
 void main() {
-  vec2 uv = gl_FragCoord.xy;
   float field = 0.0;
-
-  for (int i = 0; i < 100; i++) {
-    if (i >= u_blobCount) break;
-    vec2 p = u_blobs[i];
-    float r = u_radii[i];
-    float dx = uv.x - p.x;
-    float dy = uv.y - p.y;
-    field += (r * r) / (dx * dx + dy * dy + 1.0);
+  for (int i = 0; i < ${NUM_BLOBS}; i++) {
+    vec2 diff = gl_FragCoord.xy / vec2(${canvas.width.toFixed(1)}, ${canvas.height.toFixed(1)}) * 2.0 - 1.0 - uBlobs[i];
+    float d = dot(diff, diff);
+    field += ${BLOB_RADIUS * BLOB_RADIUS} / (d + 0.001);
   }
 
   if (field > 1.0) {
-    gl_FragColor = vec4(0.2, 0.2, 0.2, 1.0); // Dark grey blobs
+    gl_FragColor = vec4(0.2, 0.5, 0.8, 1.0); // Blob colour
   } else {
     discard;
   }
@@ -50,107 +103,80 @@ function createShader(type, source) {
   const shader = gl.createShader(type);
   gl.shaderSource(shader, source);
   gl.compileShader(shader);
-  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-    console.error(gl.getShaderInfoLog(shader));
-    gl.deleteShader(shader);
-    return null;
-  }
   return shader;
 }
 
-function createProgram(vsSource, fsSource) {
-  const vertexShader = createShader(gl.VERTEX_SHADER, vsSource);
-  const fragmentShader = createShader(gl.FRAGMENT_SHADER, fsSource);
-  const program = gl.createProgram();
-  gl.attachShader(program, vertexShader);
-  gl.attachShader(program, fragmentShader);
-  gl.linkProgram(program);
-  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-    console.error(gl.getProgramInfoLog(program));
-    return null;
-  }
-  return program;
-}
+const program = gl.createProgram();
+gl.attachShader(program, createShader(gl.VERTEX_SHADER, vertexShaderSource));
+gl.attachShader(program, createShader(gl.FRAGMENT_SHADER, fragmentShaderSource));
+gl.linkProgram(program);
+gl.useProgram(program);
 
-const program = createProgram(vertexShaderSource, fragmentShaderSource);
+// Quad covering entire screen
+const vertices = new Float32Array([
+  -1, -1, 1, -1, -1, 1,
+   1, -1, 1,  1, -1, 1
+]);
 
-// Setup full-screen quad
-const positionBuffer = gl.createBuffer();
-gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-const positions = [
-  -1, -1,
-   1, -1,
-  -1,  1,
-  -1,  1,
-   1, -1,
-   1,  1
-];
-gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+const buffer = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
 
-const a_position = gl.getAttribLocation(program, 'a_position');
-const u_resolution = gl.getUniformLocation(program, 'u_resolution');
-const u_blobCount = gl.getUniformLocation(program, 'u_blobCount');
-const u_blobs = gl.getUniformLocation(program, 'u_blobs');
-const u_radii = gl.getUniformLocation(program, 'u_radii');
+const position = gl.getAttribLocation(program, "position");
+gl.enableVertexAttribArray(position);
+gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
 
-// Blob simulation
-const blobs = [];
-const numBlobs = 16;
-const gravity = 0.8;
-const damping = 0.95;
+const uBlobs = gl.getUniformLocation(program, "uBlobs");
 
-for (let i = 0; i < numBlobs; i++) {
-  blobs.push({
-    x: Math.random() * window.innerWidth,
-    y: Math.random() * window.innerHeight * 0.6,
-    vx: 0,
-    vy: 0,
-    r: Math.random() * 20 + 30
-  });
-}
-
-function updateBlobs() {
-  for (const b of blobs) {
-    b.vy += gravity;
-    b.x += b.vx;
-    b.y += b.vy;
-
-    if (b.y + b.r > window.innerHeight * 0.75) {
-      b.y = window.innerHeight * 0.75 - b.r;
-      b.vy = 0;
-    }
-
-    b.vx *= damping;
-    b.vy *= damping;
-  }
-}
-
-function render() {
-  updateBlobs();
-
+// === ANIMATION LOOP === //
+function draw() {
+  scrollVelocity *= 0.9;
   gl.clear(gl.COLOR_BUFFER_BIT);
-  gl.useProgram(program);
 
-  gl.enableVertexAttribArray(a_position);
-  gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-  gl.vertexAttribPointer(a_position, 2, gl.FLOAT, false, 0, 0);
-
-  gl.uniform2f(u_resolution, canvas.width, canvas.height);
-  gl.uniform1i(u_blobCount, blobs.length);
-
-  const blobArray = new Float32Array(200);
-  const radiusArray = new Float32Array(100);
-  for (let i = 0; i < blobs.length; i++) {
-    blobArray[i * 2] = blobs[i].x;
-    blobArray[i * 2 + 1] = canvas.height - blobs[i].y;
-    radiusArray[i] = blobs[i].r;
-  }
-
-  gl.uniform2fv(u_blobs, blobArray);
-  gl.uniform1fv(u_radii, radiusArray);
+  blobs.forEach(b => b.update());
+  const blobData = [];
+  blobs.forEach(b => blobData.push(b.x, b.y));
+  gl.uniform2fv(uBlobs, new Float32Array(blobData));
 
   gl.drawArrays(gl.TRIANGLES, 0, 6);
-  requestAnimationFrame(render);
+  requestAnimationFrame(draw);
 }
 
-render();
+requestAnimationFrame(draw);
+
+// === EVENTS === //
+window.addEventListener("mousemove", e => {
+  const clip = toClip(e.clientX, e.clientY);
+  mouse.x = clip.x;
+  mouse.y = clip.y;
+  mouse.active = true;
+});
+
+window.addEventListener("mouseleave", () => {
+  mouse.active = false;
+});
+
+window.addEventListener("touchmove", e => {
+  if (e.touches.length > 0) {
+    const clip = toClip(e.touches[0].clientX, e.touches[0].clientY);
+    mouse.x = clip.x;
+    mouse.y = clip.y;
+    mouse.active = true;
+  }
+}, { passive: true });
+
+window.addEventListener("touchend", () => {
+  mouse.active = false;
+});
+
+window.addEventListener("scroll", () => {
+  const y = window.scrollY;
+  scrollVelocity = y - lastScrollY;
+  lastScrollY = y;
+});
+
+window.addEventListener("resize", () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  gl.viewport(0, 0, canvas.width, canvas.height);
+});
