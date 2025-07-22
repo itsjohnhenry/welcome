@@ -7,7 +7,7 @@ if (!gl) {
 
 // === CONFIGURABLE CONSTANTS === //
 const NUM_BLOBS = 600;               // Number of moving blobs
-const BASE_GRAVITY = 0.5;           // Base gravity multiplier
+const BASE_GRAVITY = 0.2;           // Base gravity multiplier
 const BLOB_DAMPING = 0.99;          // Blob velocity damping (0–1)
 const MOUSE_FORCE = 40;             // Strength of mouse attraction
 const MOUSE_RANGE = 150;            // Pixels of mouse influence
