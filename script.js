@@ -9,7 +9,7 @@ if (!gl) {
 const NUM_BLOBS = 15;               // Number of moving blobs
 const BASE_GRAVITY = 0.3;           // Gravity pull per frame
 const BLOB_DAMPING = 0.95;          // Blob velocity damping
-const MOUSE_FORCE = 2000;           // Strength of mouse attraction
+const MOUSE_FORCE = 20;           // Strength of mouse attraction
 const MOUSE_RANGE = 150;            // Pixels of mouse influence
 const SCROLL_FORCE = 10;            // Force added per scroll unit
 
