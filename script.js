@@ -8,10 +8,10 @@ if (!gl) {
 // === CONFIGURABLE CONSTANTS === //
 const NUM_BLOBS = 135;               // Number of moving blobs
 const BASE_GRAVITY = 0.3;           // Gravity pull per frame
-const BLOB_DAMPING = 0.95;          // Blob velocity damping
-const MOUSE_FORCE = -50;           // Strength of mouse attraction
+const BLOB_DAMPING = 0.99;          // Blob velocity damping
+const MOUSE_FORCE = 50;           // Strength of mouse attraction
 const MOUSE_RANGE = 150;            // Pixels of mouse influence
-const SCROLL_FORCE = 0.01;            // Force added per scroll unit
+const SCROLL_FORCE = 0.1;            // Force added per scroll unit
 
 // === STATE === //
 let width = canvas.width = window.innerWidth;
