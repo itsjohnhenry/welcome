@@ -13,16 +13,18 @@
       width: 100vw;
       height: 100vh;
       display: block;
+			color: red;
     }
 
     .textstyle {
-  mix-blend-mode: difference;
-  color: white; /* Important: gives best contrast with difference */
-  position: relative;
   padding: 2rem;
   max-width: 600px;
   line-height: 1.6;
-  z-index: 2;
+  position: relative;
+  z-index: 1;
+  mix-blend-mode: difference;
+  background: none;
+  color: white;
 }
 h1 {
   font-family: 'PP Neue Montreal', sans-serif;
