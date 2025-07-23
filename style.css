@@ -1,28 +1,43 @@
-html, body {
-  margin: 0;
-  padding: 0;
-  font-family: sans-serif;
-  background: none;
-  color: white;
-  height: 200vh; /* Ensures scrolling works */
-}
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: sans-serif;
+      background: none;
+    }
 
-canvas {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: -1;
-  width: 100vw;
-  height: 100vh;
-  display: block;
-  background: #fff;
-}
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -2;
+      width: 100vw;
+      height: 100vh;
+      display: block;
+			color: red;
+    }
 
-.text-test {
+    .textstyle {
+  mix-blend-mode: difference;
+  color: white; /* Important: gives best contrast with difference */
   position: relative;
   padding: 2rem;
   max-width: 600px;
   line-height: 1.6;
-  z-index: 1;
-  color: #000;
+  z-index: 2;
+}
+h1 {
+  font-family: 'PP Neue Montreal', sans-serif;
+  font-size: clamp(2.5rem, 8vw, 5rem);
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+p {
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 400;
+  line-height: 1.6;
+  max-width: 65ch;
 }
