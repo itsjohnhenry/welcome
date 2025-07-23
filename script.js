@@ -15,8 +15,8 @@ const SCREEN_SIZES = {
 const CONFIG = {
   mobile: {
     NUM_BLOBS: 120,
-    BASE_GRAVITY: 0.8,
-    SCROLL_FORCE: 1,
+    BASE_GRAVITY: 0.1,
+    SCROLL_FORCE: 0.5,
     MAX_RADIUS: 40
   },
   tablet: {
@@ -26,8 +26,8 @@ const CONFIG = {
     MAX_RADIUS: 35
   },
   desktop: {
-    NUM_BLOBS: 300,
-    BASE_GRAVITY: 0.05,
+    NUM_BLOBS: 600,
+    BASE_GRAVITY: 0.08,
     SCROLL_FORCE: 0.5,
     MAX_RADIUS: 30
   }
