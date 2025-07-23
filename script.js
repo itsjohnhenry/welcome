@@ -236,15 +236,22 @@ window.addEventListener("touchmove", (e) => {
 window.addEventListener("touchend", () => mouse.active = false);
 
 // === RESIZE LOGIC === //
+let prevWidth = window.innerWidth;
+
 window.addEventListener("resize", () => {
+	const newWidth = window.innerWidth;
 	const deviceRatio = window.devicePixelRatio || 1;
-	width = canvas.width = window.innerWidth * deviceRatio;
+
+	width = canvas.width = newWidth * deviceRatio;
 	height = canvas.height = window.innerHeight * deviceRatio;
-	canvas.style.width = `${window.innerWidth}px`;
+	canvas.style.width = `${newWidth}px`;
 	canvas.style.height = `${window.innerHeight}px`;
 
-	applyResponsiveSettings();
-	initBlobs();
+	if (newWidth !== prevWidth) {
+		applyResponsiveSettings();
+		initBlobs();
+		prevWidth = newWidth;
+	}
 });
 
 // === SCROLL VELOCITY === //
