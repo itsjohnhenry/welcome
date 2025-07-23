@@ -18,7 +18,7 @@ canvas {
 }
 
 .textstyle {
-	padding: 2rem;
+	padding: 4rem;
 	max-width: 600px;
 	line-height: 1.6;
 	position: relative;
@@ -29,7 +29,7 @@ canvas {
 }
 h1 {
 	font-family: "PP Neue Montreal", sans-serif;
-	font-size: clamp(1.8rem, 6vw, 5rem);
+	font-size: clamp(3rem, 10vw, 6rem);
 	font-weight: 800;
 	letter-spacing: -0.5px;
 	line-height: 1.1;
@@ -38,26 +38,25 @@ h1 {
 
 p {
 	font-family: "IBM Plex Sans", sans-serif;
-	font-size: clamp(1rem, 3.5vw, 1.1rem);
+	font-size: 1.1rem;
 	font-weight: 400;
 	line-height: 1.6;
 	max-width: 65ch;
 }
-
 @media (max-width: 768px) {
 	.textstyle {
-		padding: 1.5rem;
+		padding: 2.5rem;
 	}
 }
 
 @media (max-width: 480px) {
 	h1 {
-		font-size: clamp(1.5rem, 8vw, 3rem);
+		font-size: clamp(3rem, 10vw, 6rem);
 	}
 	p {
-		font-size: clamp(0.9rem, 4vw, 1rem);
+		font-size: clamp(1rem, 4vw, 1.5rem);
 	}
 	.textstyle {
-		padding: 1rem;
+		padding: 2.5rem;
 	}
 }
