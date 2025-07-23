@@ -1,44 +1,45 @@
-    html, body {
-      margin: 0;
-      padding: 0;
-      font-family: sans-serif;
-      background: none;
-    }
+html,
+body {
+	margin: 0;
+	padding: 0;
+	font-family: sans-serif;
+	background: none;
+}
 
-    canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: -2;
-      width: 100vw;
-      height: 100vh;
-      display: block;
-		color: white;
-    }
+canvas {
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: -2;
+	width: 100vw;
+	height: 100vh;
+	display: block;
+	color: red;
+}
 
-    .textstyle {
-  padding: 2rem;
-  max-width: 600px;
-  line-height: 1.6;
-  position: relative;
-  z-index: 1;
-  mix-blend-mode: difference;
-  background: none;
-  color: white;
+.textstyle {
+	padding: 2rem;
+	max-width: 600px;
+	line-height: 1.6;
+	position: relative;
+	z-index: 1;
+	mix-blend-mode: difference;
+	background: none;
+	color: white;
 }
 h1 {
-  font-family: 'PP Neue Montreal', sans-serif;
-  font-size: clamp(2.5rem, 8vw, 5rem);
-  font-weight: 800;
-  letter-spacing: -0.5px;
-  line-height: 1.1;
-  text-transform: uppercase;
+	font-family: "PP Neue Montreal", sans-serif;
+	font-size: clamp(2.5rem, 8vw, 5rem);
+	font-weight: 800;
+	letter-spacing: -0.5px;
+	line-height: 1.1;
+	text-transform: uppercase;
 }
 
 p {
-  font-family: 'IBM Plex Sans', sans-serif;
-  font-size: 1.1rem;
-  font-weight: 400;
-  line-height: 1.6;
-  max-width: 65ch;
+	font-family: "IBM Plex Sans", sans-serif;
+	font-size: 1.1rem;
+	font-weight: 400;
+	line-height: 1.6;
+	max-width: 65ch;
 }
