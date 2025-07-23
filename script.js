@@ -1,18 +1,17 @@
 const canvas = document.getElementById("c");
 const gl = canvas.getContext("webgl");
 
-// Abort if WebGL is unavailable
 if (!gl) {
 	alert("WebGL not supported");
 }
 
-// === SCREEN BREAKPOINTS === //
+// === SCREEN BREAKPOINTS (editable) === //
 const SCREEN_SIZES = {
   mobileMax: 767,
   tabletMax: 1024
 };
 
-// === CONFIGURABLE SETTINGS === //
+// === DEFAULT CONFIGS (editable) === //
 const CONFIG = {
   mobile: {
     NUM_BLOBS: 120,
@@ -27,28 +26,30 @@ const CONFIG = {
     MAX_RADIUS: 35
   },
   desktop: {
-    NUM_BLOBS: 300,
-    BASE_GRAVITY: 0.05,
-    SCROLL_FORCE: 0.4,
+    NUM_BLOBS: 600,
+    BASE_GRAVITY: 0.08,
+    SCROLL_FORCE: 0.25,
     MAX_RADIUS: 30
   }
 };
 
-// === CONSTANTS (DO NOT ADJUST) === //
-const MAX_BLOBS = CONFIG.desktop.NUM_BLOBS; // Shader-cap blob limit
+// === FIXED CONFIGS === //
 const BLOB_DAMPING = 0.9;
-const MOUSE_FORCE = 10;
+const MOUSE_FORCE = 15;
 const MOUSE_RANGE = 250;
-const BLOB_COLOR = [0.0, 0.0, 0.0]; // RGB black
+const BLOB_COLOR = [0.0, 0.0, 0.0]; // RGB Black
 
-// === STATE === //
+// === INITIAL STATE === //
 let width = canvas.width = window.innerWidth;
 let height = canvas.height = window.innerHeight;
 let mouse = { x: width / 2, y: height / 2, active: false };
 let scrollVelocity = 0;
 let lastScrollY = window.scrollY;
 
+// === RESPONSIVE VARIABLES (dynamic) === //
 let NUM_BLOBS, BASE_GRAVITY, SCROLL_FORCE, MAX_RADIUS;
+
+// === BLOBS ARRAY === //
 let blobs = [];
 
 // === UTILS === //
@@ -56,9 +57,10 @@ function rand(min, max) {
 	return Math.random() * (max - min) + min;
 }
 
-// === APPLY RESPONSIVE CONFIG === //
+// === RESPONSIVE CONFIGURATION HANDLER === //
 function applyResponsiveSettings() {
 	const w = window.innerWidth;
+
 	if (w <= SCREEN_SIZES.mobileMax) {
 		({ NUM_BLOBS, BASE_GRAVITY, SCROLL_FORCE, MAX_RADIUS } = CONFIG.mobile);
 	} else if (w <= SCREEN_SIZES.tabletMax) {
@@ -78,14 +80,17 @@ class Blob {
 		this.vy = rand(-1, 1);
 		this.r = rand(0.5, MAX_RADIUS);
 	}
+
 	update() {
 		const gravity = BASE_GRAVITY * (this.r / 10);
 		this.vy += gravity;
 
+		// Scroll jostle
 		const angle = Math.random() * Math.PI * 2;
 		this.vx += Math.cos(angle) * scrollVelocity * SCROLL_FORCE;
 		this.vy += Math.sin(angle) * scrollVelocity * SCROLL_FORCE;
 
+		// Mouse attraction
 		if (mouse.active) {
 			const dx = mouse.x - this.x;
 			const dy = mouse.y - this.y;
@@ -100,6 +105,7 @@ class Blob {
 		this.x += this.vx;
 		this.y += this.vy;
 
+		// Containment
 		if (this.x - this.r < 0) {
 			this.x = this.r;
 			this.vx *= -0.5;
@@ -132,16 +138,15 @@ const fragmentSrc = `
   precision mediump float;
 
   uniform vec2 u_resolution;
-  uniform vec3 u_blobs[${MAX_BLOBS}];
+  uniform vec3 u_blobs[${CONFIG.desktop.NUM_BLOBS}];
   const vec3 blobColor = vec3(${BLOB_COLOR.join(", ")});
 
   void main() {
     vec2 uv = gl_FragCoord.xy;
     float sum = 0.0;
 
-    for (int i = 0; i < ${MAX_BLOBS}; i++) {
+    for (int i = 0; i < ${CONFIG.desktop.NUM_BLOBS}; i++) {
       vec3 b = u_blobs[i];
-      if (b.z == 0.0) continue; // Ignore unused blobs
       float dx = uv.x - b.x;
       float dy = uv.y - b.y;
       float d2 = dx * dx + dy * dy + 1.0;
@@ -156,7 +161,7 @@ const fragmentSrc = `
   }
 `;
 
-// === COMPILE SHADERS === //
+// === SHADER COMPILE === //
 function compileShader(type, src) {
 	const shader = gl.createShader(type);
 	gl.shaderSource(shader, src);
@@ -178,6 +183,7 @@ gl.useProgram(program);
 
 // === BUFFERS === //
 const quad = new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]);
+
 const positionLoc = gl.getAttribLocation(program, "a_position");
 const buffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
@@ -208,7 +214,6 @@ function render() {
 
 	const blobData = [];
 	for (const b of blobs) blobData.push(b.x, height - b.y, b.r);
-	while (blobData.length < MAX_BLOBS * 3) blobData.push(0, 0, 0); // pad with zeros
 
 	gl.uniform2f(resolutionLoc, width, height);
 	gl.uniform3fv(blobsLoc, new Float32Array(blobData));
@@ -225,7 +230,9 @@ window.addEventListener("mousemove", (e) => {
 	mouse.y = e.clientY;
 	mouse.active = true;
 });
-window.addEventListener("mouseleave", () => mouse.active = false);
+window.addEventListener("mouseleave", () => {
+	mouse.active = false;
+});
 window.addEventListener("touchmove", (e) => {
 	if (e.touches.length > 0) {
 		mouse.x = e.touches[0].clientX;
@@ -233,28 +240,16 @@ window.addEventListener("touchmove", (e) => {
 		mouse.active = true;
 	}
 }, { passive: true });
-window.addEventListener("touchend", () => mouse.active = false);
-
-// === RESIZE LOGIC === //
-let prevWidth = window.innerWidth;
-
-window.addEventListener("resize", () => {
-	const newWidth = window.innerWidth;
-	const deviceRatio = window.devicePixelRatio || 1;
-
-	width = canvas.width = newWidth * deviceRatio;
-	height = canvas.height = window.innerHeight * deviceRatio;
-	canvas.style.width = `${newWidth}px`;
-	canvas.style.height = `${window.innerHeight}px`;
-
-	if (newWidth !== prevWidth) {
-		applyResponsiveSettings();
-		initBlobs();
-		prevWidth = newWidth;
-	}
+window.addEventListener("touchend", () => {
+	mouse.active = false;
 });
+window.addEventListener("resize", () => {
+	width = canvas.width = window.innerWidth;
+	height = canvas.height = window.innerHeight;
 
-// === SCROLL VELOCITY === //
+	applyResponsiveSettings(); // ← update dynamic settings
+	initBlobs();               // ← reinit blobs
+});
 window.addEventListener("scroll", () => {
 	const currentY = window.scrollY;
 	scrollVelocity = currentY - lastScrollY;
