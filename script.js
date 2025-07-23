@@ -6,13 +6,13 @@ if (!gl) {
 }
 
 // === CONFIGURABLE CONSTANTS === //
-const NUM_BLOBS = 600;               // Number of moving blobs
-const BASE_GRAVITY = 0.3;           // Base gravity multiplier
-const BLOB_DAMPING = 0.97;          // Blob velocity damping (0–1)
-const MOUSE_FORCE = 40;             // Strength of mouse attraction
-const MOUSE_RANGE = 350;            // Pixels of mouse influence
+const NUM_BLOBS = 300;               // Number of moving blobs
+const BASE_GRAVITY = 0.05;           // Base gravity multiplier
+const BLOB_DAMPING = 0.9;          // Blob velocity damping (0–1)
+const MOUSE_FORCE = 10;             // Strength of mouse attraction
+const MOUSE_RANGE = 250;            // Pixels of mouse influence
 const SCROLL_FORCE = 0.5;          // Scroll-induced jostle force
-const BLOB_COLOR = [0.4, 0.6, 1.0]; // Blob ink colour (RGB black)
+const BLOB_COLOR = [0.0, 0.0, 0.0]; // Blob ink colour (RGB black)
 
 // === STATE === //
 let width = canvas.width = window.innerWidth;
@@ -34,7 +34,7 @@ class Blob {
     this.y = rand(100, height - 100);
     this.vx = rand(-1, 1);
     this.vy = rand(-1, 1);
-    this.r = rand(0.5, 30); // Blob radius
+    this.r = rand(0.1, 30); // Blob radius
   }
 
   update() {
@@ -170,7 +170,7 @@ for (let i = 0; i < NUM_BLOBS; i++) {
 // === RENDER LOOP === //
 function render() {
   gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
-  gl.clearColor(1, 1, 1, 1);
+  gl.clearColor(0.22, 0.2, 0.2, 1);
   gl.clear(gl.COLOR_BUFFER_BIT);
 
   for (const blob of blobs) blob.update();
@@ -181,6 +181,30 @@ function render() {
   gl.uniform2f(resolutionLoc, width, height);
   gl.uniform3fv(blobsLoc, new Float32Array(blobData));
   gl.drawArrays(gl.TRIANGLES, 0, 6);
+	
+	function isBlobBehind(element) {
+  const rect = element.getBoundingClientRect();
+  const x = Math.floor(rect.left + rect.width / 2);
+  const y = Math.floor(rect.top + rect.height / 2);
+
+  const pixel = new Uint8Array(4);
+  gl.readPixels(x, canvas.height - y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
+
+  // Tweak threshold as needed
+  const brightness = (pixel[0] + pixel[1] + pixel[2]) / 3;
+  return brightness < 100; // darker = blob present
+}
+
+function updateTextColour() {
+  const elems = document.querySelectorAll('.textstyle h1, .textstyle p');
+  elems.forEach(el => {
+    if (isBlobBehind(el)) {
+      el.style.color = '#6C38FF'; // Electric Indigo
+    } else {
+      el.style.color = '#fff'; // Black by default
+    }
+  });
+}
 
   scrollVelocity *= 0.9;
   requestAnimationFrame(render);
