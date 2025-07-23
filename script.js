@@ -2,21 +2,21 @@ const canvas = document.getElementById("c");
 const gl = canvas.getContext("webgl");
 
 if (!gl) {
-  alert("WebGL not supported");
+	alert("WebGL not supported");
 }
 
 // === CONFIGURABLE CONSTANTS === //
-const NUM_BLOBS = 300;               // Number of moving blobs
-const BASE_GRAVITY = 0.05;           // Base gravity multiplier
-const BLOB_DAMPING = 0.9;          // Blob velocity damping (0–1)
-const MOUSE_FORCE = 10;             // Strength of mouse attraction
-const MOUSE_RANGE = 250;            // Pixels of mouse influence
-const SCROLL_FORCE = 0.5;          // Scroll-induced jostle force
+const NUM_BLOBS = 300; // Number of moving blobs
+const BASE_GRAVITY = 0.05; // Base gravity multiplier
+const BLOB_DAMPING = 0.9; // Blob velocity damping (0–1)
+const MOUSE_FORCE = 10; // Strength of mouse attraction
+const MOUSE_RANGE = 250; // Pixels of mouse influence
+const SCROLL_FORCE = 0.5; // Scroll-induced jostle force
 const BLOB_COLOR = [0.0, 0.0, 0.0]; // Blob ink colour (RGB black)
 
 // === STATE === //
-let width = canvas.width = window.innerWidth;
-let height = canvas.height = window.innerHeight;
+let width = (canvas.width = window.innerWidth);
+let height = (canvas.height = window.innerHeight);
 
 let mouse = { x: width / 2, y: height / 2, active: false };
 let scrollVelocity = 0;
@@ -25,65 +25,65 @@ let lastScrollY = window.scrollY;
 const blobs = [];
 
 function rand(min, max) {
-  return Math.random() * (max - min) + min;
+	return Math.random() * (max - min) + min;
 }
 
 class Blob {
-  constructor() {
-    this.x = rand(100, width - 100);
-    this.y = rand(100, height - 100);
-    this.vx = rand(-1, 1);
-    this.vy = rand(-1, 1);
-    this.r = rand(0.1, 30); // Blob radius
-  }
+	constructor() {
+		this.x = rand(100, width - 100);
+		this.y = rand(100, height - 100);
+		this.vx = rand(-1, 1);
+		this.vy = rand(-1, 1);
+		this.r = rand(0.1, 30); // Blob radius
+	}
 
-  update() {
-    // Gravity (scaled by blob size)
-    const gravity = BASE_GRAVITY * (this.r / 10);
-    this.vy += gravity;
+	update() {
+		// Gravity (scaled by blob size)
+		const gravity = BASE_GRAVITY * (this.r / 10);
+		this.vy += gravity;
 
-    // Scroll jostle
-    const angle = Math.random() * Math.PI * 2;
-    this.vx += Math.cos(angle) * scrollVelocity * SCROLL_FORCE;
-    this.vy += Math.sin(angle) * scrollVelocity * SCROLL_FORCE;
+		// Scroll jostle
+		const angle = Math.random() * Math.PI * 2;
+		this.vx += Math.cos(angle) * scrollVelocity * SCROLL_FORCE;
+		this.vy += Math.sin(angle) * scrollVelocity * SCROLL_FORCE;
 
-    // Mouse attraction
-    if (mouse.active) {
-      const dx = mouse.x - this.x;
-      const dy = mouse.y - this.y;
-      const dist2 = dx * dx + dy * dy;
-      if (dist2 < MOUSE_RANGE * MOUSE_RANGE) {
-        const force = MOUSE_FORCE / (dist2 + 1);
-        this.vx += dx * force;
-        this.vy += dy * force;
-      }
-    }
+		// Mouse attraction
+		if (mouse.active) {
+			const dx = mouse.x - this.x;
+			const dy = mouse.y - this.y;
+			const dist2 = dx * dx + dy * dy;
+			if (dist2 < MOUSE_RANGE * MOUSE_RANGE) {
+				const force = MOUSE_FORCE / (dist2 + 1);
+				this.vx += dx * force;
+				this.vy += dy * force;
+			}
+		}
 
-    // Movement
-    this.x += this.vx;
-    this.y += this.vy;
+		// Movement
+		this.x += this.vx;
+		this.y += this.vy;
 
-    // Containment
-    if (this.x - this.r < 0) {
-      this.x = this.r;
-      this.vx *= -0.5;
-    } else if (this.x + this.r > width) {
-      this.x = width - this.r;
-      this.vx *= -0.5;
-    }
+		// Containment
+		if (this.x - this.r < 0) {
+			this.x = this.r;
+			this.vx *= -0.5;
+		} else if (this.x + this.r > width) {
+			this.x = width - this.r;
+			this.vx *= -0.5;
+		}
 
-    if (this.y - this.r < 0) {
-      this.y = this.r;
-      this.vy *= -0.5;
-    } else if (this.y + this.r > height) {
-      this.y = height - this.r;
-      this.vy *= -0.5;
-    }
+		if (this.y - this.r < 0) {
+			this.y = this.r;
+			this.vy *= -0.5;
+		} else if (this.y + this.r > height) {
+			this.y = height - this.r;
+			this.vy *= -0.5;
+		}
 
-    // Damping
-    this.vx *= BLOB_DAMPING;
-    this.vy *= BLOB_DAMPING;
-  }
+		// Damping
+		this.vx *= BLOB_DAMPING;
+		this.vy *= BLOB_DAMPING;
+	}
 }
 
 // === SHADERS === //
@@ -123,13 +123,13 @@ const fragmentSrc = `
 
 // === COMPILE SHADERS === //
 function compileShader(type, src) {
-  const shader = gl.createShader(type);
-  gl.shaderSource(shader, src);
-  gl.compileShader(shader);
-  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-    console.error(gl.getShaderInfoLog(shader));
-  }
-  return shader;
+	const shader = gl.createShader(type);
+	gl.shaderSource(shader, src);
+	gl.compileShader(shader);
+	if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+		console.error(gl.getShaderInfoLog(shader));
+	}
+	return shader;
 }
 
 const vertexShader = compileShader(gl.VERTEX_SHADER, vertexSrc);
@@ -142,14 +142,7 @@ gl.linkProgram(program);
 gl.useProgram(program);
 
 // === SETUP BUFFERS === //
-const quad = new Float32Array([
-  -1, -1,
-   1, -1,
-  -1,  1,
-  -1,  1,
-   1, -1,
-   1,  1
-]);
+const quad = new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]);
 
 const positionLoc = gl.getAttribLocation(program, "a_position");
 const buffer = gl.createBuffer();
@@ -164,79 +157,83 @@ const blobsLoc = gl.getUniformLocation(program, "u_blobs");
 
 // === INIT BLOBS === //
 for (let i = 0; i < NUM_BLOBS; i++) {
-  blobs.push(new Blob());
+	blobs.push(new Blob());
 }
 
 // === RENDER LOOP === //
 function render() {
-  gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
-  gl.clearColor(0.22, 0.2, 0.2, 1);
-  gl.clear(gl.COLOR_BUFFER_BIT);
+	gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+	gl.clearColor(0.22, 0.2, 0.2, 1);
+	gl.clear(gl.COLOR_BUFFER_BIT);
 
-  for (const blob of blobs) blob.update();
+	for (const blob of blobs) blob.update();
 
-  const blobData = [];
-  for (const b of blobs) blobData.push(b.x, height - b.y, b.r);
+	const blobData = [];
+	for (const b of blobs) blobData.push(b.x, height - b.y, b.r);
 
-  gl.uniform2f(resolutionLoc, width, height);
-  gl.uniform3fv(blobsLoc, new Float32Array(blobData));
-  gl.drawArrays(gl.TRIANGLES, 0, 6);
-	
+	gl.uniform2f(resolutionLoc, width, height);
+	gl.uniform3fv(blobsLoc, new Float32Array(blobData));
+	gl.drawArrays(gl.TRIANGLES, 0, 6);
+
 	function isBlobBehind(element) {
-  const rect = element.getBoundingClientRect();
-  const x = Math.floor(rect.left + rect.width / 2);
-  const y = Math.floor(rect.top + rect.height / 2);
+		const rect = element.getBoundingClientRect();
+		const x = Math.floor(rect.left + rect.width / 2);
+		const y = Math.floor(rect.top + rect.height / 2);
 
-  const pixel = new Uint8Array(4);
-  gl.readPixels(x, canvas.height - y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
+		const pixel = new Uint8Array(4);
+		gl.readPixels(x, canvas.height - y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
 
-  // Tweak threshold as needed
-  const brightness = (pixel[0] + pixel[1] + pixel[2]) / 3;
-  return brightness < 100; // darker = blob present
-}
+		// Tweak threshold as needed
+		const brightness = (pixel[0] + pixel[1] + pixel[2]) / 3;
+		return brightness < 100; // darker = blob present
+	}
 
-function updateTextColour() {
-  const elems = document.querySelectorAll('.textstyle h1, .textstyle p');
-  elems.forEach(el => {
-    if (isBlobBehind(el)) {
-      el.style.color = '#6C38FF'; // Electric Indigo
-    } else {
-      el.style.color = '#fff'; // Black by default
-    }
-  });
-}
+	function updateTextColour() {
+		const elems = document.querySelectorAll(".textstyle h1, .textstyle p");
+		elems.forEach((el) => {
+			if (isBlobBehind(el)) {
+				el.style.color = "#6C38FF"; // Electric Indigo
+			} else {
+				el.style.color = "#fff"; // Black by default
+			}
+		});
+	}
 
-  scrollVelocity *= 0.9;
-  requestAnimationFrame(render);
+	scrollVelocity *= 0.9;
+	requestAnimationFrame(render);
 }
 
 requestAnimationFrame(render);
 
 // === EVENTS === //
-window.addEventListener("mousemove", e => {
-  mouse.x = e.clientX;
-  mouse.y = e.clientY;
-  mouse.active = true;
+window.addEventListener("mousemove", (e) => {
+	mouse.x = e.clientX;
+	mouse.y = e.clientY;
+	mouse.active = true;
 });
 window.addEventListener("mouseleave", () => {
-  mouse.active = false;
+	mouse.active = false;
 });
-window.addEventListener("touchmove", e => {
-  if (e.touches.length > 0) {
-    mouse.x = e.touches[0].clientX;
-    mouse.y = e.touches[0].clientY;
-    mouse.active = true;
-  }
-}, { passive: true });
+window.addEventListener(
+	"touchmove",
+	(e) => {
+		if (e.touches.length > 0) {
+			mouse.x = e.touches[0].clientX;
+			mouse.y = e.touches[0].clientY;
+			mouse.active = true;
+		}
+	},
+	{ passive: true }
+);
 window.addEventListener("touchend", () => {
-  mouse.active = false;
+	mouse.active = false;
 });
 window.addEventListener("resize", () => {
-  width = canvas.width = window.innerWidth;
-  height = canvas.height = window.innerHeight;
+	width = canvas.width = window.innerWidth;
+	height = canvas.height = window.innerHeight;
 });
 window.addEventListener("scroll", () => {
-  const currentY = window.scrollY;
-  scrollVelocity = currentY - lastScrollY;
-  lastScrollY = currentY;
+	const currentY = window.scrollY;
+	scrollVelocity = currentY - lastScrollY;
+	lastScrollY = currentY;
 });
