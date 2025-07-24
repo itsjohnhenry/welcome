@@ -162,15 +162,13 @@ p {
   height: 100px;
   width: auto;
   opacity: 1;
-  filter: brightness(0.85);
+  filter: brightness(1);
+  transition: filter 0.3s ease, transform 0.3s ease;
   transform: translateY(0);
-  transition: all 0.3s ease;
 }
 
-/* Hover effect: slightly brighten and scale up the image */
 .logo-grid img:hover {
-  opacity: 0.85;
-  filter: none;
+  filter: brightness(0.9);
   transform: translateY(-6px);
 }
 
