@@ -163,15 +163,15 @@ p {
   width: auto;
   opacity: 1;
   filter: brightness(0.85);
+  transform: translateY(0);
   transition: all 0.3s ease;
-  filter: none;
 }
 
 /* Hover effect: slightly brighten and scale up the image */
 .logo-grid img:hover {
   opacity: 0.85;
-  filter: brightness(1);
-  transform: scale(1.06);
+  filter: none;
+  transform: translateY(-6px);
 }
 
 /* === Tablet Styles === */
