@@ -33,10 +33,10 @@ const CONFIG = {
     NUM_BLOBS: 200,
     BASE_GRAVITY: 0.05,
     SCROLL_FORCE: 0.6,
-    MIN_RADIUS: 1,
+    MIN_RADIUS: 0.5,
     MAX_RADIUS: 45,
     MOUSE_FORCE: 10,
-    MOUSE_RANGE: 350
+    MOUSE_RANGE:150
   }
 };
 
@@ -171,7 +171,7 @@ const fragmentSrc = `
       float dx = uv.x - b.x;
       float dy = uv.y - b.y;
       float d2 = dx * dx + dy * dy + 1.0;
-      sum += pow(b.z, 3.5) / pow(d2, 1.4);
+      sum += pow(b.z, 2.5) / pow(d2, 1.1);
     }
     if (sum > 1.0) {
       gl_FragColor = vec4(blobColor, 1.0);
@@ -268,6 +268,18 @@ window.addEventListener("resize", () => {
   if (window.innerWidth !== prevWidth) {
     applyResponsiveSettings();
   }
+});
+
+// === Obfuscate Contact Info ===
+window.addEventListener("DOMContentLoaded", () => {
+  const email = "hello" + "@" + "johnhenry.com.au";
+  const phone = "+61" + "437" + "492" + "236";
+
+  const emailLink = document.getElementById("email-link");
+  emailLink.innerHTML = `<a href="mailto:${email}">${email}</a>`;
+
+  const phoneLink = document.getElementById("phone-link");
+  phoneLink.innerHTML = `<a href="tel:${phone.replace(/\s+/g, '')}">${phone}</a>`;
 });
 
 // === INITIALISE === //
