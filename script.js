@@ -17,7 +17,7 @@ const CONFIG = {
     SCROLL_FORCE: 0.2,
     MIN_RADIUS: 1,
     MAX_RADIUS: 35,
-    MOUSE_FORCE: 10,
+    MOUSE_FORCE: 20,
     MOUSE_RANGE: 120
   },
   tablet: {
@@ -26,7 +26,7 @@ const CONFIG = {
     SCROLL_FORCE: 0.5,
     MIN_RADIUS: 1,
     MAX_RADIUS: 35,
-    MOUSE_FORCE: 10,
+    MOUSE_FORCE: 20,
     MOUSE_RANGE: 180
   },
   desktop: {
@@ -35,8 +35,8 @@ const CONFIG = {
     SCROLL_FORCE: 0.6,
     MIN_RADIUS: 0.5,
     MAX_RADIUS: 45,
-    MOUSE_FORCE: 10,
-    MOUSE_RANGE:150
+    MOUSE_FORCE: 20,
+    MOUSE_RANGE: 250
   }
 };
 
@@ -270,17 +270,7 @@ window.addEventListener("resize", () => {
   }
 });
 
-// === Obfuscate Contact Info ===
-window.addEventListener("DOMContentLoaded", () => {
-  const email = "hello" + "@" + "johnhenry.com.au";
-  const phone = "+61" + "437" + "492" + "236";
 
-  const emailLink = document.getElementById("email-link");
-  emailLink.innerHTML = `<a href="mailto:${email}">${email}</a>`;
-
-  const phoneLink = document.getElementById("phone-link");
-  phoneLink.innerHTML = `<a href="tel:${phone.replace(/\s+/g, '')}">${phone}</a>`;
-});
 
 // === INITIALISE === //
 applyResponsiveSettings();
