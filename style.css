@@ -214,8 +214,11 @@ p {
 }
 
 @media (max-width: 768px) {
-  .about-content {
+	.about-content {
     flex-direction: column-reverse;
     align-items: flex-start;
+  }
+	.logo-grid img {
+    height: 70px;
   }
 }
