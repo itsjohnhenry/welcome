@@ -1,6 +1,7 @@
 /* === Base Reset === */
 html {
   scroll-behavior: smooth; 
+}
 body {
   margin: 0;
   font-family: "IBM Plex Sans", sans-serif;
@@ -54,6 +55,7 @@ canvas {
   justify-content: left;
   width: 100%;
   overscroll-behavior-x: contain;
+  transform: translateZ(0);
 }
 
 h1 {
@@ -66,6 +68,7 @@ h1 {
   margin: 0;
   white-space: nowrap;
   padding: 0;
+  will-change: transform;
 }
 
 /* === H2, H3, Paragraphs === */
@@ -190,6 +193,18 @@ p {
   filter: brightness(0.85);
 }
 
+/* === Current Project Logo Hover Effect === */
+.logo-grid a.current-project img {
+  filter: brightness(1);
+  opacity: 1;
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.logo-grid a.current-project img:hover {
+  transform: translateY(-3px);
+  filter: brightness(0.85);
+}
+
 /* === Tablet Styles === */
 @media (max-width: 1024px) {
   p {
@@ -214,11 +229,11 @@ p {
 }
 
 @media (max-width: 768px) {
-	.about-content {
+  .about-content {
     flex-direction: column-reverse;
     align-items: flex-start;
   }
-	.logo-grid img {
+  .logo-grid img {
     height: 70px;
   }
 }
