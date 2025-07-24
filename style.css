@@ -155,19 +155,22 @@ p {
 
 .logo-grid a {
   display: inline-block;
+  transition: transform 0.3s ease;
 }
 
 .logo-grid img {
-  height: 40px;
+  height: 100px;
   width: auto;
   opacity: 0.85;
   transition: all 0.3s ease;
   filter: none;
 }
 
+/* Hover effect: slightly brighten and scale up the image */
 .logo-grid img:hover {
   opacity: 1;
-  filter: brightness(0.85);
+  filter: brightness(0.95);
+  transform: scale(1.06);
 }
 
 /* === Tablet Styles === */
