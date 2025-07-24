@@ -1,13 +1,107 @@
-<link rel="stylesheet" href="style.css">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400&display=swap" rel="stylesheet">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>John Henry – Portfolio</title>
 
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
+  <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
+	<link rel="icon" type="image/png" href="images/favicon.png" sizes="16x16">
+</head>
 <body>
-	<canvas id="c"></canvas>
-	<div class="textstyle">
-		<h1>Dad<br>Designer<br>Dreamer<br>Discoverer</h1>
-		<p>Scroll to the bottom of the page to see the fluid react.<br>Try capturing the drops with your pointer.</p>
-		<p style="margin-top: 200vh;">Scroll test near bottom — you should see the fluid.</p>
-	</div>
-	<script src="script.js"></script>
-</body>  
+  <canvas id="c"></canvas>
+
+  <div class="textstyle">
+    <div class="h1-wrapper">
+      <h1>Dad<br>Designer<br>Dreamer<br>Discoverer</h1>
+    </div>
+
+    <div class="about-content">
+      <div class="about-text">
+        <h2>John Henry is a designer and creative thinker who brings ideas to life through simplicity and smart execution.</h2>
+        <p>His career spans design, marketing, operations, and education, often bridging the gap between the creative and the practical — sometimes within the same hour.</p>
+        <p>With a background in teaching, John’s work is grounded in clarity, empathy, and collaboration. He values clear communication, streamlined processes, and helping others thrive in their own work.</p>
+        <p>Strong relationships are at the heart of everything he does. His methods rely on approachability, trust, attention to detail, and a desire to do things properly without overcomplication.</p>
+      </div>
+    </div>
+
+    <section class="work-section" data-aos="fade-up" data-aos-delay="300">
+      <div class="brand-logos" data-aos="fade-up" data-aos-delay="300">
+        <h3>Current Projects</h3>
+        <div class="logo-grid">
+    <a href="https://merchwindow.com" target="_blank" rel="noopener noreferrer">
+    <img src="images/merchwindow.png" alt="Merch Window Logo">
+  </a>
+  <a href="https://black.marketing" target="_blank" rel="noopener noreferrer">
+    <img src="images/black.png" alt="Black Marketing & Creative Logo">
+  </a>
+  <a href="https://www.miltonandking.com/collection/saint-pierre-australia/" target="_blank" rel="noopener noreferrer">
+    <img src="images/stpierre.png" alt="Saint Pierre Logo">
+  </a>
+  </div>
+      </div>
+
+      <div class="brand-logos" data-aos="fade-up" data-aos-delay="400">
+        <h3>Past & Present Clients</h3>
+        <div class="logo-grid">
+          <a href="https://www.qepaustralasia.com.au" target="_blank" rel="noopener noreferrer">
+    <img src="images/qep.png" alt="QEP Logo">
+  </a>
+  <a href="https://signaturepropertylaunceston.com.au" target="_blank" rel="noopener noreferrer">
+    <img src="images/signature.png" alt="Signature Property Logo">
+  </a>
+  <a href="https://hydrotasmania.com.au" target="_blank" rel="noopener noreferrer">
+    <img src="images/hydrotas.png" alt="Hydro Tasmania Logo">
+  </a>
+  <a href="https://simsforproperty.com.au" target="_blank" rel="noopener noreferrer">
+    <img src="images/sims.png" alt="Sims for Property Logo">
+  </a>
+  <a href="https://expera.com.au" target="_blank" rel="noopener noreferrer">
+    <img src="images/expera.png" alt="Expera Group Logo">
+  </a>
+  <a href="https://cpd.com.au" target="_blank" rel="noopener noreferrer">
+    <img src="images/cpd.png" alt="CPD Logo">
+  </a>
+  <a href="https://col.coop" target="_blank" rel="noopener noreferrer">
+    <img src="images/col.png" alt="COL Co-op Logo">
+  </a>
+  <a href="https://howellpg.com.au" target="_blank" rel="noopener noreferrer">
+    <img src="images/howellpg.png" alt="Howell Property Group Logo">
+  </a>
+  <a href="https://www.tasfoods.com.au" target="_blank" rel="noopener noreferrer">
+    <img src="images/tasfoods.png" alt="TasFoods Logo">
+  </a>
+  <a href="https://vibestown.com.au" target="_blank" rel="noopener noreferrer">
+    <img src="images/vibestown.png" alt="Vibestown Logo">
+  </a>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <section class="contact-section" data-aos="slide-up-no-fade">
+    <div class="textstyle">
+      <h2>From identity and digital to strategy and everything in between.</h2>
+      <p>John is currently open to new projects and collaborations. Whether you’re after a full rebrand, a digital refresh, or just want to explore an idea, he’s always keen to chat.</p>
+      <p>You’re welcome to reach out using the details below.</p>
+      <div class="contact-links">
+        <p><span id="email-link"></span></p>
+        <p><span id="phone-link"></span></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Scripts -->
+  <script src="script.js"></script>
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+  <script>
+    AOS.init({
+      duration: 700,
+      once: true
+    });
+  </script>
+</body>
+</html>
