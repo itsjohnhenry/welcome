@@ -1,77 +1,198 @@
 /* === Base Reset === */
 html,
 body {
-	margin: 0;
-	padding: 0;
-	font-family: sans-serif;
-	background: none;
-	overflow-x: hidden;
+  margin: 0;
+  font-family: "IBM Plex Sans", sans-serif;
+  background: none;
+  overflow-x: hidden;
+  padding: 2rem 2rem 0rem 2rem;
 }
 
 /* === Fullscreen WebGL Canvas === */
 canvas {
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100vw;
-	height: 100vh;
-	display: block;
-	z-index: -2;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: block;
+  z-index: -2;
 }
 
-/* === Default (Desktop) Text Styles === */
+/* === Default Text Styles === */
 .textstyle {
-	padding: 2rem;
-	max-width: 800px;
-	line-height: 1.2;
-	position: relative;
-	z-index: 1;
-	mix-blend-mode: difference;
-	color: white;
+  line-height: 1.2;
+  position: relative;
+  z-index: 1;
+  mix-blend-mode: difference;
+  color: white;
+}
+
+/* === H1 Container === */
+.h1-wrapper {
+  display: flex;
+  justify-content: left;
+  width: 100%;
+  overflow-x: auto;
 }
 
 h1 {
-	font-family: "PP Neue Montreal", sans-serif;
-	font-size: 8rem;
-	font-weight: 800;
-	letter-spacing: -0.7px;
-	line-height: 1.1;
-	text-transform: uppercase;
-	margin: 0 0 1rem;
-	transition:
-		font-size 0.3s ease,
-		line-height 0.3s ease,
-		letter-spacing 0.3s ease;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: clamp(3rem, 12vw, 9rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  text-transform: uppercase;
+  margin: 0;
+  white-space: nowrap;
+  padding: 0;
+}
+
+/* === H2, H3, Paragraphs === */
+h2 {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 500;
+  max-width: 45ch;
+}
+
+h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  font-family: "Space Grotesk", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 p {
-	font-family: "IBM Plex Sans", sans-serif;
-	font-size: 1.2rem;
-	font-weight: 400;
-	line-height: 1.6;
-	max-width: 65ch;
-	margin: 0 0 1rem;
-	transition: color 0.2s ease;
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: 1.2rem;
+  font-weight: 400;
+  line-height: 1.6;
+  max-width: 55ch;
+  margin: 0 0 1rem;
+  transition: color 0.2s ease;
+}
+
+/* === About Section === */
+.about-content {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2rem;
+  margin-top: 4rem;
+}
+
+.about-text {
+  flex: 1 1 300px;
+}
+
+/* === Work Section === */
+.work-section {
+  background-color: rgba(220, 220, 220, 0.4);
+  backdrop-filter: difference;
+  mix-blend-mode: normal;
+  max-width: 100vw;
+  padding: 2rem;
+  margin: 4rem 0;
+  border-radius: 2rem;
+  color: white;
+}
+
+.work-wrapper {
+  max-width: 100vw;
+  margin: 0 auto;
+}
+
+.brand-logos {
+  margin-bottom: 3rem;
+}
+
+/* === Contact Section === */
+.contact-section {
+  position: relative;
+  z-index: 2;
+  background: #ccc;
+  color: black;
+  padding: 4rem 2rem;
+  margin-top: 4rem;
+  border-top-left-radius: 2rem;
+  border-top-right-radius: 2rem;
+  box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.1);
+}
+
+.contact-links a {
+  color: #fff;
+  border-bottom: 1px solid #2c3e50;
+  text-decoration: none;
+}
+
+.contact-links a:hover {
+  color: #a6cbff;
+  border-bottom-color: #a6cbff;
+}
+
+/* === Job History === */
+.job-history ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.job-history li {
+  margin-bottom: 0.75rem;
+  line-height: 1.5;
+  font-size: 1rem;
+}
+
+/* === Brand Logos Grid === */
+.logo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 2rem;
+  align-items: center;
+  justify-items: center;
+  margin-bottom: 3rem;
+}
+
+.logo-grid img {
+  width: 100%;
+  max-width: 160px;
+  height: auto;
+  transition: filter 0.3s ease, transform 0.3s ease;
+  filter: brightness(1);
+}
+
+.logo-grid img:hover {
+  filter: brightness(0.7);
+  transform: translateY(-2px);
 }
 
 /* === Tablet Styles === */
 @media (max-width: 1024px) {
-	h1 {
-		font-size: 4rem;
-		letter-spacing: -0.5px;
-	}
-	p {
-		font-size: 1.1rem;
-	}
+  p {
+    font-size: 1.1rem;
+  }
 }
 
 /* === Mobile Styles === */
 @media (max-width: 767px) {
-	h1 {
-		font-size: 3rem;
-		letter-spacing: -0.3px;
-	}
-	p {
-		font-size: 1rem;
-	}
+  p {
+    font-size: 1rem;
+  }
+
+  .logo-grid {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .about-content {
+    flex-direction: column-reverse;
+    align-items: flex-start;
+  }
+
+  .about-image {
+    align-self: center;
+  }
 }
