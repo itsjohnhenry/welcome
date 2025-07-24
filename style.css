@@ -46,7 +46,6 @@ h1 {
   margin: 0;
   white-space: nowrap;
   padding: 0;
-  color: red;
 }
 
 /* === H2, H3, Paragraphs === */
@@ -90,7 +89,6 @@ p {
 /* === Work Section === */
 .work-section {
   background-color: rgba(220, 220, 220, 0.4);
-  mix-blend-mode: normal;
   max-width: 100vw;
   padding: 2rem;
   margin: 4rem 0;
@@ -105,6 +103,7 @@ p {
 
 .brand-logos {
   margin-bottom: 3rem;
+  mix-blend-mode: none;
 }
 
 /* === Contact Section === */
