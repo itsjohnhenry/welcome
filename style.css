@@ -144,27 +144,30 @@ p {
   font-size: 1rem;
 }
 
-/* === Brand Logos Grid === */
+/* === Brand Logos === */
 .logo-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 2rem;
-  align-items: center;
-  justify-items: center;
-  margin-bottom: 3rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.logo-grid a {
+  display: inline-block;
 }
 
 .logo-grid img {
-  width: 100%;
-  max-width: 160px;
-  height: auto;
-  transition: filter 0.3s ease, transform 0.3s ease;
-  filter: brightness(1);
+  height: 40px;
+  width: auto;
+  opacity: 0.85;
+  transition: all 0.3s ease;
+  filter: none;
 }
 
 .logo-grid img:hover {
-  filter: brightness(0.7);
-  transform: translateY(-2px);
+  opacity: 1;
+  filter: brightness(0.85);
 }
 
 /* === Tablet Styles === */
@@ -181,8 +184,12 @@ p {
   }
 
   .logo-grid {
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 1.5rem;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .logo-grid a {
+    margin-bottom: 1rem;
   }
 }
 
@@ -190,9 +197,5 @@ p {
   .about-content {
     flex-direction: column-reverse;
     align-items: flex-start;
-  }
-
-  .about-image {
-    align-self: center;
   }
 }
