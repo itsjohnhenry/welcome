@@ -33,7 +33,7 @@ canvas {
   display: flex;
   justify-content: left;
   width: 100%;
-  overflow: auto;
+  overscroll-behavior-x: contain;
 }
 
 h1 {
