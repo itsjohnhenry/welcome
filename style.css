@@ -218,6 +218,16 @@ p {
     font-size: 1rem;
   }
 
+  .about-content {
+    flex-direction: column-reverse;
+    align-items: flex-start;
+  }
+
+  .logo-grid img {
+    height: 70px;
+  }
+
+  /* Default to stacked layout */
   .logo-grid {
     flex-direction: column;
     align-items: flex-start;
@@ -226,14 +236,34 @@ p {
   .logo-grid a {
     margin-bottom: 1rem;
   }
-}
 
-@media (max-width: 768px) {
-  .about-content {
-    flex-direction: column-reverse;
-    align-items: flex-start;
+  /* === Full-width Current Projects === */
+  .logo-grid a.current-project {
+    width: 100%;
   }
-  .logo-grid img {
-    height: 70px;
+
+  .logo-grid a.current-project img {
+    width: 100%;
+    height: 150px;
+    max-height: 150px;
+    object-fit: contain;
+  }
+
+  /* === Two-column layout for Past Clients === */
+  .brand-logos:not(:has(.current-project)) .logo-grid {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .brand-logos:not(:has(.current-project)) .logo-grid a {
+    width: calc(50% - 0.75rem);
+    margin-bottom: 1.5rem;
+  }
+
+  .brand-logos:not(:has(.current-project)) .logo-grid img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
   }
 }
