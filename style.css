@@ -26,7 +26,6 @@ canvas {
   line-height: 1.2;
   position: relative;
   z-index: 1;
-  mix-blend-mode: difference;
   color: white;
 }
 
@@ -44,7 +43,7 @@ canvas {
 }
 
 .contact-button:hover {
-  background: #eee;
+  background: #2c3e50;
 	color: black;
   transform: translateY(-2px);
 }
@@ -55,6 +54,7 @@ canvas {
   justify-content: left;
   width: 100%;
   overscroll-behavior-x: contain;
+  mix-blend-mode: difference;
   transform: translateZ(0);
 }
 
@@ -134,7 +134,7 @@ p {
 .contact-section {
   position: relative;
   z-index: 2;
-  background: #ccc;
+  background: #cccccc99;
   color: black;
   padding: 4rem 2rem;
   margin-top: 4rem;
@@ -190,7 +190,6 @@ p {
   border-radius: 0;
 }
 
-/* Shared hover state for all logos */
 .logo-grid img:hover {
   transform: translateY(-3px);
   filter: invert(1);
