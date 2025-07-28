@@ -27,6 +27,7 @@ canvas {
   position: relative;
   z-index: 0;
   color: white;
+	mix-blend-mode: difference;
 }
 
 .contact-button {
