@@ -194,8 +194,8 @@ p {
 .logo-grid img:hover {
   transform: translateY(-3px);
   filter: invert(1);
-  background: #fff;
-  border-radius: 25px;
+  background: #000;
+  border-radius: 0.5rem;
 }
 
 /* === Tablet Styles === */
