@@ -18,14 +18,14 @@ canvas {
   width: 100vw;
   height: 100vh;
   display: block;
-  z-index: -2;
+  z-index: -1;
 }
 
 /* === Default Text Styles === */
 .textstyle {
   line-height: 1.2;
   position: relative;
-  z-index: 1;
+  z-index: 0;
   color: white;
 }
 
@@ -33,7 +33,7 @@ canvas {
   position: fixed;
   top: 1rem;
   right: 1rem;
-  z-index: 10;
+  z-index: 1;
   color: white;
   text-transform: uppercase;
   font-weight: bold;
@@ -55,6 +55,7 @@ canvas {
   width: 100%;
   overscroll-behavior-x: contain;
   transform: translateZ(0);
+  z-index: 1;
 }
 
 h1 {
@@ -69,6 +70,7 @@ h1 {
   padding: 0;
   mix-blend-mode: difference;
   will-change: transform;
+  z-index: 1;
 }
 
 /* === H2, H3, Paragraphs === */
@@ -76,6 +78,7 @@ h2 {
   font-family: "Space Grotesk", sans-serif;
   font-weight: 500;
   max-width: 45ch;
+  z-index: 1;
 }
 
 h3 {
@@ -84,6 +87,7 @@ h3 {
   font-family: "Space Grotesk", sans-serif;
   text-transform: uppercase;
   letter-spacing: 1px;
+  z-index: 1;
 }
 
 p {
@@ -94,6 +98,7 @@ p {
   max-width: 65ch;
   margin: 0 0 1rem;
   transition: color 0.2s ease;
+  z-index: 1;
 }
 
 /* === About Section === */
@@ -133,7 +138,7 @@ p {
 /* === Contact Section === */
 .contact-section {
   position: relative;
-  z-index: 2;
+  z-index: 1;
   background: #cccccc99;
   color: black;
   padding: 4rem 2rem;
