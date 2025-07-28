@@ -138,15 +138,16 @@ p {
 
 /* === Contact Section === */
 .contact-section {
+  isolation: isolate;
   position: relative;
-  z-index: 0;
+  z-index: 1;
   background: #cccccc99;
   color: black;
   padding: 4rem 2rem;
   margin-top: 4rem;
   border-top-left-radius: 2rem;
   border-top-right-radius: 2rem;
-  box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.5);
 }
 
 .contact-links a {
