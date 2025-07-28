@@ -190,7 +190,7 @@ p {
 
 .logo-grid img:hover {
   opacity: 1;
-  background: #fff;
+  background: #000;
   border-radius: 25px;
   transform: translateY(-3px);
   filter: invert(1);
