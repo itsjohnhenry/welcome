@@ -34,7 +34,7 @@ canvas {
   position: fixed;
   top: 1rem;
   right: 1rem;
-  z-index: 0;
+  z-index: 2;
   color: white;
   text-transform: uppercase;
   font-weight: bold;
