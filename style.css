@@ -184,13 +184,14 @@ p {
   height: 100px;
   width: auto;
   opacity: 0.85;
-	background: #eee;
   transition: all 0.3s ease;
   filter: none;
 }
 
 .logo-grid img:hover {
   opacity: 1;
+	background: #fff;
+	border-radius:25px;
   transform: translateY(-3px);
   filter: brightness(0.85);
 }
