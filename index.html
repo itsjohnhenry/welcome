@@ -97,12 +97,14 @@
   </script>
   
   <script>
-fetch('https://script.google.com/macros/s/AKfycbwIphZJM6LSrXHZLp6mZAugHGS7HiQqz9kRQjEU3kleoe1_GSO_S7b8OJPBCCbMWrbmiw/exec', {
+fetch('https://script.google.com/macros/s/AKfycbyllwLc3faCZkvybEWUW2DHgkOk1KlUKG7cL6ocE8_ZEpcLfAcutV6n95N2XFQMS8UoQg/exec', {
   method: 'POST',
+  mode: 'no-cors', // workaround for CORS issue
   headers: {
     'Content-Type': 'application/json'
   },
   body: JSON.stringify({
+    ua: navigator.userAgent,
     ref: document.referrer
   })
 });
