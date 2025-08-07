@@ -108,40 +108,39 @@ fetch('https://script.google.com/macros/s/AKfycbyllwLc3faCZkvybEWUW2DHgkOk1KlUKG
     ref: document.referrer
   })
 });
-</script>
-  <script>
+<script>
 (function () {
-  // Don't run if already logged this session
-  if (sessionStorage.getItem('ipLogged')) return;
+  // Only run in browser, skip bots and crawlers
+  const isBot = /bot|crawl|spider|crawling/i.test(navigator.userAgent);
+  const alreadyLogged = sessionStorage.getItem("userLogged");
 
-  // Basic bot filter using user agent
-  const ua = navigator.userAgent.toLowerCase();
-  const isBot = /bot|crawl|spider|slurp|headless|pingdom|monitor|preview/.test(ua);
-  if (isBot) return;
+  if (isBot || alreadyLogged) return;
 
   fetch('https://ipinfo.io/json?token=346a7a5ef7e143')
-    .then(res => res.json())
+    .then(response => response.json())
     .then(data => {
-      // Send data to your Google Apps Script endpoint
       fetch('https://script.google.com/macros/s/AKfycbwkQWmBJcjcWa7AIanXJLO57dYCpydroBVhwpuzKJ60ivdh2kOERvRRfZWqgXOD3mngeA/exec', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          ip: data.ip || "Unknown",
-          city: data.city || "Unknown",
-          region: data.region || "Unknown",
-          country: data.country || "Unknown",
+          ip: data.ip,
+          city: data.city,
+          region: data.region,
+          country: data.country,
+          loc: data.loc,
           ua: navigator.userAgent,
           ref: document.referrer
         })
       }).then(() => {
-        sessionStorage.setItem('ipLogged', 'true'); // Mark as logged for this session
+        // Mark as logged in this session
+        sessionStorage.setItem("userLogged", "true");
+      }).catch(err => {
+        console.warn("Logging failed:", err);
       });
-    })
-    .catch(err => {
-      console.warn('IP logging failed:', err);
+    }).catch(err => {
+      console.warn("IP info fetch failed:", err);
     });
 })();
 </script>
