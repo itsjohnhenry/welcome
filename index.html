@@ -109,5 +109,23 @@ fetch('https://script.google.com/macros/s/AKfycbyllwLc3faCZkvybEWUW2DHgkOk1KlUKG
   })
 });
 </script>
+
+  <script>
+fetch('https://ipapi.co/json/')
+  .then(res => res.json())
+  .then(data => {
+    fetch('https://script.google.com/macros/s/AKfycbyllwLc3faCZkvybEWUW2DHgkOk1KlUKG7cL6ocE8_ZEpcLfAcutV6n95N2XFQMS8UoQg/exec', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        ip: data.ip,             // Send IP here
+        ua: navigator.userAgent,
+        ref: document.referrer
+      })
+    });
+  });
+</script>
 </body>
 </html>
