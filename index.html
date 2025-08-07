@@ -94,22 +94,18 @@
       duration: 700,
       once: true
     });
-  </script><script>
-fetch('https://ipapi.co/json/')
-  .then(res => res.json())
-  .then(data => {
-    fetch('https://script.google.com/macros/s/AKfycbytlqd0bmcrWi8FYgxx1nGiFXIiC09-dbzG3f-2nQ2IyzNh6txKgi0IF_1UnMRjDfo6kg/exec', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        ip: data.ip,
-        ua: navigator.userAgent,
-        ref: document.referrer
-      })
-    });
-  });
+  </script>
+  
+  <script>
+fetch('https://script.google.com/macros/s/AKfycbwTo0qTFt2DYHQWz3PAbnsViJbm4uEoDWunce2Mgnkhnw8_lBiJ0a1_9AMw9vtia48J2A/exec', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    ref: document.referrer
+  })
+});
 </script>
 </body>
 </html>
