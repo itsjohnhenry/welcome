@@ -109,23 +109,41 @@ fetch('https://script.google.com/macros/s/AKfycbyllwLc3faCZkvybEWUW2DHgkOk1KlUKG
   })
 });
 </script>
-
   <script>
-fetch('https://ipapi.co/json/')
-  .then(res => res.json())
-  .then(data => {
-    fetch('https://script.google.com/macros/s/AKfycbyllwLc3faCZkvybEWUW2DHgkOk1KlUKG7cL6ocE8_ZEpcLfAcutV6n95N2XFQMS8UoQg/exec', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        ip: data.ip,             // Send IP here
-        ua: navigator.userAgent,
-        ref: document.referrer
-      })
+(function () {
+  // Don't run if already logged this session
+  if (sessionStorage.getItem('ipLogged')) return;
+
+  // Basic bot filter using user agent
+  const ua = navigator.userAgent.toLowerCase();
+  const isBot = /bot|crawl|spider|slurp|headless|pingdom|monitor|preview/.test(ua);
+  if (isBot) return;
+
+  fetch('https://ipinfo.io/json?token=346a7a5ef7e143')
+    .then(res => res.json())
+    .then(data => {
+      // Send data to your Google Apps Script endpoint
+      fetch('https://script.google.com/macros/s/AKfycbwkQWmBJcjcWa7AIanXJLO57dYCpydroBVhwpuzKJ60ivdh2kOERvRRfZWqgXOD3mngeA/exec', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          ip: data.ip || "Unknown",
+          city: data.city || "Unknown",
+          region: data.region || "Unknown",
+          country: data.country || "Unknown",
+          ua: navigator.userAgent,
+          ref: document.referrer
+        })
+      }).then(() => {
+        sessionStorage.setItem('ipLogged', 'true'); // Mark as logged for this session
+      });
+    })
+    .catch(err => {
+      console.warn('IP logging failed:', err);
     });
-  });
+})();
 </script>
 </body>
 </html>
