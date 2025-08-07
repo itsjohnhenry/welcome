@@ -95,42 +95,37 @@
       once: true
     });
   </script>
+
+  
   
 <script>
 (function () {
-  // Prevent bot traffic and multiple logs in the same session
   const isBot = /bot|crawl|spider|crawling/i.test(navigator.userAgent);
   const alreadyLogged = sessionStorage.getItem("userLogged");
 
   if (isBot || alreadyLogged) return;
 
-  // Get IP and location data from ipinfo.io
-  fetch('https://ipinfo.io/json?token=346a7a5ef7e143')
+  fetch("https://ipinfo.io/json?token=346a7a5ef7e143")
     .then(response => response.json())
     .then(data => {
-      // Send the log data to Google Apps Script
-      fetch('https://script.google.com/macros/s/AKfycbw9n-TME9xu6dDG4vwx-W1fEaJmdIaBYsYCjFGHIKvyM4WHFBl3s1bavU_tjGupXbftvw/exec', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+      fetch("https://script.google.com/macros/s/AKfycbz7ExQOoRvvUUzL6dfWopH_tNH5kB03wM60ZrtbjRUPmDsr6__p7L8c2KvOGrY-IhRzsg/exec", {
+        method: "POST",
+        mode: "no-cors", // Prevents CORS errors
         body: JSON.stringify({
-          ip: data.ip || "Unknown",
-          city: data.city || "",
-          region: data.region || "",
-          country: data.country || "",
-          loc: data.loc || "",
-          ua: navigator.userAgent || "Unknown",
-          ref: document.referrer || "None"
+          ip: data.ip,
+          city: data.city,
+          region: data.region,
+          country: data.country,
+          loc: data.loc,
+          ua: navigator.userAgent,
+          ref: document.referrer
         })
-      }).then(() => {
-        sessionStorage.setItem("userLogged", "true");
-      }).catch(err => {
-        console.warn("Logging failed:", err);
       });
+
+      sessionStorage.setItem("userLogged", "true");
     })
     .catch(err => {
-      console.warn("IP info fetch failed:", err);
+      console.warn("IP fetch failed:", err);
     });
 })();
 </script>
