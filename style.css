@@ -46,7 +46,7 @@ canvas {
 .contact-button:hover {
   background: #fff;
 	color: black;
-  transform: translateY(-2px);
+  transform: translateY(-3px);
 }
 
 /* === H1 Container === */
@@ -145,8 +145,7 @@ p {
   color: black;
   padding: 4rem 2rem;
   margin-top: 4rem;
-  border-top-left-radius: 2rem;
-  border-top-right-radius: 2rem;
+  border-radius: 2rem;
   box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.5);
 }
 
@@ -159,6 +158,7 @@ p {
 .contact-links a:hover {
   color: #a6cbff;
   border-bottom-color: #a6cbff;
+	transform: translateY(-3px);
 }
 
 /* === Job History === */
