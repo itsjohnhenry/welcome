@@ -143,8 +143,8 @@ p {
   z-index: 1;
   background: rgba(255, 255, 255, 0.85);
   color: black;
-  padding: 4rem 2rem;
-  margin-top: 4rem;
+  padding: 2rem;
+  margin-top: 8rem;
   border-radius: 2rem;
   box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.5);
 }
