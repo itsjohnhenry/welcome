@@ -145,7 +145,7 @@ p {
   color: black;
   padding: 2rem;
   margin-top: 12rem;
-  border-radius: 0.5rem;
+  border-radius: 1rem;
   box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.5);
 }
 
