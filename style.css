@@ -67,7 +67,7 @@ h1 {
   line-height: 1.1;
   text-transform: uppercase;
   margin: 0;
-  white-space: nowrap;
+  /*white-space: nowrap;*/
   padding: 0;
   mix-blend-mode: difference;
   will-change: transform;
