@@ -168,42 +168,47 @@ p {
 
 /* === Current Projects === */
 .logo-grid.current-projects-grid {
-  display: grid;
+  display: grid !important;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 3rem;
   align-items: start;
+  justify-items: center;
 }
 
-.logo-grid.current-projects-grid .current-project {
-  display: flex;
+.logo-grid.current-projects-grid a.current-project {
+  display: flex !important;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
   width: 100%;
+  max-width: 320px;
+  margin: 0;
   text-align: center;
   text-decoration: none;
   color: inherit;
 }
 
-.logo-grid.current-projects-grid .current-project img {
+.logo-grid.current-projects-grid a.current-project img {
+  display: block;
   width: 220px;
   max-width: 100%;
-  height: 100px;
+  height: 110px;
   object-fit: contain;
-  margin-bottom: 1.25rem;
+  margin: 0 0 1.25rem;
 }
 
-.logo-grid.current-projects-grid .current-project span {
+.logo-grid.current-projects-grid a.current-project span {
   display: block;
   max-width: 320px;
   font-size: 0.95rem;
   line-height: 1.45;
   opacity: 0.75;
   color: inherit;
+  text-align: center;
   text-decoration: none;
 }
 
-.logo-grid.current-projects-grid .current-project:hover span {
+.logo-grid.current-projects-grid a.current-project:hover span {
   opacity: 1;
 }
 
@@ -289,24 +294,25 @@ p {
   }
 
   .logo-grid.current-projects-grid {
-    display: grid;
+    display: grid !important;
     grid-template-columns: 1fr;
     gap: 2.5rem;
+    justify-items: center;
   }
 
-  .logo-grid.current-projects-grid .current-project {
+  .logo-grid.current-projects-grid a.current-project {
     max-width: 100%;
     margin-bottom: 0;
   }
 
-  .logo-grid.current-projects-grid .current-project img {
+  .logo-grid.current-projects-grid a.current-project img {
     width: 100%;
-    height: 150px;
-    max-height: 150px;
+    height: 140px;
+    max-height: 140px;
     object-fit: contain;
   }
 
-  .logo-grid.current-projects-grid .current-project span {
+  .logo-grid.current-projects-grid a.current-project span {
     max-width: 320px;
   }
 
