@@ -2,12 +2,13 @@
 html {
   scroll-behavior: smooth; 
 }
+
 body {
   margin: 0;
   font-family: "IBM Plex Sans", sans-serif;
   background: none;
   overflow-x: hidden;
-  padding: 7rem 7rem 7rem 7rem;
+  padding: 7rem;
 }
 
 /* === Fullscreen WebGL Canvas === */
@@ -27,7 +28,7 @@ canvas {
   position: relative;
   z-index: 0;
   color: white;
-	mix-blend-mode: difference;
+  mix-blend-mode: difference;
 }
 
 .contact-button {
@@ -45,7 +46,7 @@ canvas {
 
 .contact-button:hover {
   background: #fff;
-	color: black;
+  color: black;
   transform: translateY(-5px);
 }
 
@@ -67,7 +68,6 @@ h1 {
   line-height: 1.1;
   text-transform: uppercase;
   margin: 0;
-  /*white-space: nowrap;*/
   padding: 0;
   mix-blend-mode: difference;
   will-change: transform;
@@ -115,49 +115,6 @@ p {
   flex: 1 1 300px;
 }
 
-.current-projects-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 3rem;
-  align-items: start;
-}
-
-.current-project {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  text-decoration: none;
-  color: inherit;
-}
-
-.current-project img {
-  max-width: 220px;
-  width: 100%;
-  height: auto;
-  margin-bottom: 1rem;
-}
-
-.current-project span {
-  max-width: 280px;
-  font-size: 0.95rem;
-  line-height: 1.5;
-  opacity: 0.75;
-  color: inherit;
-  text-decoration: none;
-}
-
-.current-project:hover span {
-  opacity: 1;
-}
-
-@media (max-width: 900px) {
-  .current-projects-grid {
-    grid-template-columns: 1fr;
-    gap: 2.5rem;
-  }
-}
-
 /* === Work Section === */
 .work-section {
   background-color: rgba(220, 220, 220, 0.4);
@@ -177,44 +134,6 @@ p {
 
 .brand-logos {
   margin-bottom: 3rem;
-}
-
-/* === Contact Section === */
-.contact-section {
-  isolation: isolate;
-  position: relative;
-  z-index: 1;
-  background: rgba(255, 255, 255, 0.85);
-  color: black;
-  padding: 2rem;
-  margin-top: 12rem;
-  border-radius: 1rem;
-  box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.5);
-}
-
-.contact-links a {
-  color: #000;
-  border-bottom: 1px solid #2c3e50;
-  text-decoration: none;
-}
-
-.contact-links a:hover {
-  color: #a6cbff;
-  border-bottom-color: #a6cbff;
-	transform: translateY(-5px);
-}
-
-/* === Job History === */
-.job-history ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.job-history li {
-  margin-bottom: 0.75rem;
-  line-height: 1.5;
-  font-size: 1rem;
 }
 
 /* === Brand Logos === */
@@ -247,15 +166,106 @@ p {
   border-radius: 0.5rem;
 }
 
+/* === Current Projects === */
+.logo-grid.current-projects-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 3rem;
+  align-items: start;
+}
+
+.logo-grid.current-projects-grid .current-project {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  text-align: center;
+  text-decoration: none;
+  color: inherit;
+}
+
+.logo-grid.current-projects-grid .current-project img {
+  width: 220px;
+  max-width: 100%;
+  height: 100px;
+  object-fit: contain;
+  margin-bottom: 1.25rem;
+}
+
+.logo-grid.current-projects-grid .current-project span {
+  display: block;
+  max-width: 320px;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  opacity: 0.75;
+  color: inherit;
+  text-decoration: none;
+}
+
+.logo-grid.current-projects-grid .current-project:hover span {
+  opacity: 1;
+}
+
+/* === Contact Section === */
+.contact-section {
+  isolation: isolate;
+  position: relative;
+  z-index: 1;
+  background: rgba(255, 255, 255, 0.85);
+  color: black;
+  padding: 2rem;
+  margin-top: 12rem;
+  border-radius: 1rem;
+  box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.5);
+}
+
+.contact-links a {
+  color: #000;
+  border-bottom: 1px solid #2c3e50;
+  text-decoration: none;
+}
+
+.contact-links a:hover {
+  color: #a6cbff;
+  border-bottom-color: #a6cbff;
+  transform: translateY(-5px);
+}
+
+/* === Job History === */
+.job-history ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.job-history li {
+  margin-bottom: 0.75rem;
+  line-height: 1.5;
+  font-size: 1rem;
+}
+
 /* === Tablet Styles === */
 @media (max-width: 1024px) {
+  body {
+    padding: 5rem;
+  }
+
   p {
     font-size: 1.1rem;
+  }
+
+  .logo-grid.current-projects-grid {
+    gap: 2rem;
   }
 }
 
 /* === Mobile Styles === */
 @media (max-width: 767px) {
+  body {
+    padding: 2rem;
+  }
+
   p {
     font-size: 1rem;
   }
@@ -269,7 +279,6 @@ p {
     height: 100px;
   }
 
-  /* Default to stacked layout */
   .logo-grid {
     flex-direction: column;
     align-items: flex-start;
@@ -279,19 +288,28 @@ p {
     margin-bottom: 1rem;
   }
 
-  /* === Full-width Current Projects === */
-  .logo-grid a.current-project {
-    width: 100%;
+  .logo-grid.current-projects-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
   }
 
-  .logo-grid a.current-project img {
+  .logo-grid.current-projects-grid .current-project {
+    max-width: 100%;
+    margin-bottom: 0;
+  }
+
+  .logo-grid.current-projects-grid .current-project img {
     width: 100%;
     height: 150px;
     max-height: 150px;
     object-fit: contain;
   }
 
-  /* === Two-column layout for Past Clients === */
+  .logo-grid.current-projects-grid .current-project span {
+    max-width: 320px;
+  }
+
   .brand-logos:not(:has(.current-project)) .logo-grid {
     flex-direction: row;
     flex-wrap: wrap;
