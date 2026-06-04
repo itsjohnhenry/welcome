@@ -117,14 +117,16 @@ p {
 
 .current-projects-grid {
   display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 3rem;
+  align-items: start;
 }
 
 .current-project {
-  display: grid;
-  grid-template-columns: 220px minmax(0, 1fr);
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 3rem;
+  text-align: center;
   text-decoration: none;
   color: inherit;
 }
@@ -133,32 +135,26 @@ p {
   max-width: 220px;
   width: 100%;
   height: auto;
-  display: block;
+  margin-bottom: 1rem;
 }
 
 .current-project span {
-  max-width: 560px;
-  font-size: 1rem;
-  line-height: 1.45;
-  opacity: 0.78;
-  text-decoration: none;
+  max-width: 280px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  opacity: 0.75;
   color: inherit;
+  text-decoration: none;
 }
 
 .current-project:hover span {
   opacity: 1;
 }
 
-@media (max-width: 700px) {
-  .current-project {
+@media (max-width: 900px) {
+  .current-projects-grid {
     grid-template-columns: 1fr;
-    gap: 1rem;
-    text-align: center;
-    justify-items: center;
-  }
-
-  .current-project span {
-    max-width: 300px;
+    gap: 2.5rem;
   }
 }
 
