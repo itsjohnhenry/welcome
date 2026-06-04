@@ -115,19 +115,51 @@ p {
   flex: 1 1 300px;
 }
 
+.current-projects-grid {
+  display: grid;
+  gap: 3rem;
+}
+
 .current-project {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
   align-items: center;
-  text-align: center;
-  gap: 0.85rem;
+  gap: 3rem;
+  text-decoration: none;
+  color: inherit;
+}
+
+.current-project img {
+  max-width: 220px;
+  width: 100%;
+  height: auto;
+  display: block;
 }
 
 .current-project span {
-  max-width: 260px;
-  font-size: 0.9rem;
+  max-width: 560px;
+  font-size: 1rem;
   line-height: 1.45;
   opacity: 0.78;
+  text-decoration: none;
+  color: inherit;
+}
+
+.current-project:hover span {
+  opacity: 1;
+}
+
+@media (max-width: 700px) {
+  .current-project {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    text-align: center;
+    justify-items: center;
+  }
+
+  .current-project span {
+    max-width: 300px;
+  }
 }
 
 /* === Work Section === */
