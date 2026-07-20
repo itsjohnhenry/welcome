@@ -62,10 +62,10 @@ canvas {
 
 h1 {
   font-family: "Space Grotesk", sans-serif;
-  font-size: clamp(3.5rem, 12vw, 9rem);
+  font-size: clamp(2.5rem, 8vw, 5rem);
   font-weight: 700;
-  letter-spacing: -0.03em;
-  line-height: 1.1;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
   text-transform: uppercase;
   margin: 0;
   padding: 0;
