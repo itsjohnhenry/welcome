@@ -243,7 +243,7 @@ function render() {
 // === EVENTS === //
 window.addEventListener("DOMContentLoaded", () => {
   const email = "hello" + "@" + "johnhenry.com.au";
-  const phone = "+61" + "437" + "492" + "236";
+  const phone = "+61" + "473" + "492" + "236";
 
   document.getElementById("email-link").innerHTML = `<a href="mailto:${email}">${email}</a>`;
   document.getElementById("phone-link").innerHTML = `<a href="tel:${phone.replace(/\s+/g, '')}">${phone}</a>`;
