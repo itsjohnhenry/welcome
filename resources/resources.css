@@ -2,7 +2,6 @@
 *{box-sizing:border-box}
 .resource-page{background:#383333;color:white}
 header{margin-bottom:3rem}
-.brand{color:white;font-family:"Space Grotesk",sans-serif;font-weight:700;text-transform:uppercase;text-underline-offset:5px}
 main{max-width:1400px;margin:auto}
 .page-intro,.intro{margin-bottom:4rem}
 .page-intro>p,.intro>p{margin-top:1.5rem}

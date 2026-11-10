@@ -40,7 +40,15 @@ canvas {
   gap: 0.25rem;
 }
 
-.contact-button {
+.brand {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 2;
+  text-underline-offset: 5px;
+}
+
+.contact-button, .brand {
   color: white;
   text-transform: uppercase;
   font-weight: bold;
@@ -49,13 +57,21 @@ canvas {
   transition: background 0.3s ease, transform 0.2s ease;
 }
 
-.contact-button:hover, .contact-button:focus-visible {
+.contact-button:hover, .contact-button:focus-visible,
+.brand:hover, .brand:focus-visible {
   background: #fff;
   color: black;
   transform: translateY(-5px);
 }
 
 /* === H1 Container === */
+@media (max-width: 400px) {
+  .site-nav .contact-button, .brand {
+    font-size: 0.75rem;
+    padding: 0.5rem;
+  }
+}
+
 .h1-wrapper {
   display: flex;
   justify-content: left;
