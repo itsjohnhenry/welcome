@@ -31,11 +31,16 @@ canvas {
   mix-blend-mode: difference;
 }
 
-.contact-button {
+.site-nav {
   position: fixed;
   top: 1rem;
   right: 1rem;
   z-index: 2;
+  display: flex;
+  gap: 0.25rem;
+}
+
+.contact-button {
   color: white;
   text-transform: uppercase;
   font-weight: bold;
@@ -44,7 +49,7 @@ canvas {
   transition: background 0.3s ease, transform 0.2s ease;
 }
 
-.contact-button:hover {
+.contact-button:hover, .contact-button:focus-visible {
   background: #fff;
   color: black;
   transform: translateY(-5px);
@@ -268,7 +273,7 @@ p {
 /* === Mobile Styles === */
 @media (max-width: 767px) {
   body {
-    padding: 2rem;
+    padding: 5rem 2rem 2rem;
   }
 
   p {
