@@ -36,3 +36,11 @@
 @media print{.section-links,form,select,label{display:none}.colour-page .workspace{background:white;border:1px solid #aaa;break-inside:avoid}.intro{display:block!important;color:black;mix-blend-mode:normal}.three,.split,.answer-grid{display:block}}
 
 .colour-page header a{text-shadow:0 1px 3px #000,0 0 5px #000}.colour-page header a:hover{ text-shadow:none }
+.recipe-picker{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.6rem;margin:1.5rem 0}
+.recipe-choice{display:flex;gap:.65rem;align-items:center;background:transparent;color:#111;border:1px solid #aaa;text-align:left;padding:.7rem;font-size:.9rem}
+.recipe-choice[aria-pressed="true"]{border:2px solid #111;background:#dedede;color:#111}
+.recipe-choice:hover{background:#e6e6e6;color:#111}
+.recipe-dot{display:block;width:26px;height:26px;border-radius:50%;border:1px solid #0003;flex-shrink:0}
+.mix-controls{max-width:360px;margin:1.5rem 0}.recipe{display:grid;grid-template-columns:140px 1fr;gap:1.5rem;border-top:1px solid #bbb;padding-top:1.5rem;margin-top:1.5rem}.recipe-result{min-height:160px;border-radius:8px;border:1px solid #0003}.recipe h3{font-size:1.6rem;margin-top:0}.recipe .formula{font-size:1.15rem;font-weight:600}.palette-lab{border:0;padding:0;margin:0}
+@media(max-width:700px){.recipe-picker{grid-template-columns:repeat(3,minmax(0,1fr))}.recipe{grid-template-columns:1fr}.recipe-result{min-height:80px}}
+@media(max-width:450px){.recipe-picker{grid-template-columns:repeat(2,minmax(0,1fr))}}
