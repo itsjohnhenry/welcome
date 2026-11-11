@@ -4,25 +4,95 @@ const $=id=>document.getElementById(id);
 const wheel=[['Red','#c83c40'],['Red-orange','#e35c35'],['Orange','#e99232'],['Yellow-orange','#f1b938'],['Yellow','#edda43'],['Yellow-green','#a7b84b'],['Green','#43895d'],['Blue-green','#318b90'],['Blue','#3a62a6'],['Blue-violet','#65569d'],['Violet','#8a4b9c'],['Red-violet','#b44b80']];
 // Curated starting experiments, not a numerical pigment-mixing model.
 const recipes=[
- {name:'Orange',hex:'#e78a39',mix:'2 parts warm yellow + 1 part warm red',adjust:'More yellow makes it more golden. Add red a little at a time for a redder orange.'},
- {name:'Leaf green',hex:'#769347',mix:'3 parts lemon yellow + a small touch of phthalo blue (green shade)',adjust:'Phthalo blue is strong. Start with much less than one part, then add tiny amounts until the green feels right.'},
- {name:'Olive',hex:'#85804a',mix:'3 parts yellow ochre + 1 part ultramarine blue',adjust:'Add more yellow ochre to warm it. A tiny touch of burnt sienna can quieten a green that is too bright.'},
- {name:'Turquoise',hex:'#439fa0',mix:'2 parts phthalo blue (green shade) + 1 part phthalo green',white:3,adjust:'Add green for a greener turquoise, or blue for a bluer one. Both pigments are strong, so make a tiny mix first.'},
- {name:'Purple',hex:'#86519e',mix:'1 part quinacridone magenta or rose + 1 part ultramarine blue',adjust:'Add more rose for a redder purple, or blue for a bluer purple. An orange-red may make this mix duller.'},
- {name:'Lilac',hex:'#b7a2d2',mix:'1 part quinacridone magenta or rose + 1 part ultramarine blue',white:6,adjust:'Mix the purple first. Add it gradually to the white; you may need less than the recipe suggests.'},
- {name:'Pink',hex:'#df9bac',mix:'1 part quinacridone rose',white:5,adjust:'Add rose for a stronger pink. A warm red gives a warmer, more coral pink.'},
- {name:'Peach',hex:'#e3b391',mix:'2 parts yellow ochre + 1 part warm red',white:8,adjust:'Start with plenty of white and add the coloured mix slowly. This is a peach recipe, not a universal skin-colour formula.'},
- {name:'Terracotta',hex:'#b56e54',mix:'2 parts burnt sienna + 1 part yellow ochre',white:1,adjust:'Add burnt sienna for a redder brown. Leave out some white for a deeper colour.'},
- {name:'Brown',hex:'#80624c',mix:'2 parts burnt sienna + 1 part ultramarine blue',adjust:'Add burnt sienna for warmth. More blue makes a cooler, darker brown.'},
- {name:'Grey',hex:'#81858d',mix:'1 part ultramarine blue + 1 part burnt sienna',white:3,adjust:'Balance the blue and brown until the mix feels neutral. More blue cools it; more sienna warms it.'},
- {name:'Deep navy',hex:'#313f5e',mix:'3 parts ultramarine blue + 1 part burnt umber',adjust:'Add the umber slowly: it darkens and mutes the blue. Add more blue if it becomes too brown.'}
+  {
+    "name": "Orange",
+    "hex": "#e78a39",
+    "mix": "2 parts yellow + 1 part red",
+    "adjust": "More yellow makes it more golden. Add red a little at a time for a redder orange."
+  },
+  {
+    "name": "Green",
+    "hex": "#769347",
+    "mix": "2 parts yellow + 1 part blue",
+    "adjust": "Start with yellow and add blue slowly. More yellow gives a yellower green; more blue gives a bluer green."
+  },
+  {
+    "name": "Muted green",
+    "hex": "#85804a",
+    "mix": "2 parts yellow + 1 part blue + a tiny touch of red",
+    "adjust": "Mix the green first, then add red little by little to make it less bright."
+  },
+  {
+    "name": "Blue-green",
+    "hex": "#439fa0",
+    "mix": "2 parts blue + 1 part yellow",
+    "white": 3,
+    "adjust": "More yellow makes it greener. More blue makes it bluer. Your paints may give a quieter colour than the swatch."
+  },
+  {
+    "name": "Purple",
+    "hex": "#86519e",
+    "mix": "1 part red + 1 part blue",
+    "adjust": "Add red for a redder purple or blue for a bluer one. Some basic reds and blues make a dull purple; that is the paint, not a mistake."
+  },
+  {
+    "name": "Light purple",
+    "hex": "#b7a2d2",
+    "mix": "1 part red + 1 part blue",
+    "white": 6,
+    "adjust": "Mix the purple first, then add a little of it to the white until you like the colour.",
+    "waterAdjust": "Mix the purple first, then add water a little at a time and test on white paper."
+  },
+  {
+    "name": "Pink",
+    "hex": "#df9bac",
+    "mix": "1 part red",
+    "white": 5,
+    "adjust": "Add a little red to the white, not all at once. Add more red for a stronger pink.",
+    "waterAdjust": "Dilute the red with water for a pale wash. Your red may make a warmer or cooler pink."
+  },
+  {
+    "name": "Peach",
+    "hex": "#e3b391",
+    "mix": "2 parts yellow + 1 part red",
+    "white": 8,
+    "adjust": "Make orange first, then add a little to the white. This gives a light orange, not a colour for every skin tone.",
+    "waterAdjust": "Make orange first, then dilute with water for a pale wash. This is not a colour for every skin tone."
+  },
+  {
+    "name": "Red-brown",
+    "hex": "#b56e54",
+    "mix": "2 parts red + 1 part yellow + a tiny touch of blue",
+    "white": 1,
+    "adjust": "Make a red-orange first. Add blue slowly to quieten it. Add more red if it becomes too grey."
+  },
+  {
+    "name": "Brown",
+    "hex": "#80624c",
+    "mix": "1 part red + 1 part yellow + 1 part blue",
+    "adjust": "Start with red and yellow, then add the blue gradually; you may not need all of it. More red or yellow warms the brown."
+  },
+  {
+    "name": "Grey",
+    "hex": "#81858d",
+    "mix": "1 part black",
+    "white": 6,
+    "adjust": "Start with white and add black a tiny amount at a time. A touch of blue cools it; a touch of red warms it.",
+    "waterAdjust": "Dilute black with water and test on white paper. Use more water for a lighter grey."
+  },
+  {
+    "name": "Dark blue",
+    "hex": "#313f5e",
+    "mix": "3 parts blue + a tiny touch of black",
+    "adjust": "Add black slowly: a little can darken the blue quickly. Add more blue if the mix becomes too dark."
+  }
 ];
-function recipeFor(index,medium){const r=recipes[index];if(!r||!['opaque','watercolour'].includes(medium))throw Error('Invalid recipe');return {name:r.name,hex:r.hex,formula:r.mix+(medium==='opaque'&&r.white?' + '+r.white+' parts titanium white':''),adjust:r.adjust,finish:medium==='watercolour'?(r.white?'Leave out white paint. Add clean water gradually and test on white watercolour paper for a pale version.':'Add water to control the strength of the wash. Test on white watercolour paper.'):'Mix a small amount with a palette knife or brush. Check the dried colour before making a larger batch.'};}
+function recipeFor(index,medium){const r=recipes[index];if(!r||!['opaque','watercolour'].includes(medium))throw Error('Invalid recipe');return {name:r.name,hex:r.hex,formula:r.mix+(medium==='opaque'&&r.white?' + '+r.white+' parts white':''),adjust:r.adjust,finish:medium==='watercolour'?(r.white?'Leave out white paint. Add clean water gradually and test on white watercolour paper for a pale version.':'Add water to control the strength of the wash. Test on white watercolour paper.'):'Mix a small amount with a palette knife or brush. Check the dried colour before making a larger batch.'};}
 function add(tag,text,parent,cls){const el=document.createElement(tag);el.textContent=text;if(cls)el.className=cls;parent.append(el);return el;}
 for(const [i,c] of wheel.entries()){const o=add('option',c[0],$('base-hue'));o.value=String(i);}$('base-hue').value='8';
 function palette(){const base=Number($('base-hue').value),type=$('harmony').value;const offsets={neighbours:[-1,0,1],opposite:[0,6],split:[0,5,7],triad:[0,4,8],single:[0,0,0]}[type];$('palette').replaceChildren();offsets.forEach((off,i)=>{const [name,hex]=wheel[(base+off+12)%12];const chip=add('div','',$('palette'),'colour-chip');const swatch=add('i','',chip);swatch.setAttribute('aria-hidden','true');swatch.style.background=type==='single'?`color-mix(in srgb, ${hex} ${[35,100,55][i]}%, ${i===2?'black':'white'})`:hex;add('span',type==='single'?['Lighter','Starting colour','Darker'][i]:name,chip);});$('harmony-note').textContent={neighbours:'Neighbours feel connected. Vary light and dark to keep the shapes clear.',opposite:'Opposites create contrast. Let one lead and use the other in smaller areas.',split:'One colour plus the two neighbours of its opposite: contrast with a little more variety.',triad:'Three spaced colours feel lively. Let one take up most of the space.',single:'One hue is enough. Use light and dark versions to give it variety.'}[type];}
 let chosen=0;
 recipes.forEach((r,i)=>{const b=add('button','',$('recipe-picker'),'recipe-choice');b.type='button';b.setAttribute('aria-pressed','false');const dot=add('span','',b,'recipe-dot');dot.style.background=r.hex;dot.setAttribute('aria-hidden','true');add('span',r.name,b);b.onclick=()=>{chosen=i;showRecipe();};});
-function showRecipe(){const medium=$('paint-type').value,r=recipeFor(chosen,medium),root=$('recipe');root.replaceChildren();[...$('recipe-picker').children].forEach((b,i)=>b.setAttribute('aria-pressed',String(i===chosen)));const swatch=add('div','',root,'recipe-result');swatch.style.background=r.hex;swatch.setAttribute('aria-hidden','true');const content=add('div','',root);add('h3',r.name,content);add('p','Start with',content,'small');add('p',r.formula,content,'formula');add('p',medium==='watercolour'?recipes[chosen].adjust.replace('Mix the purple first. Add it gradually to the white; you may need less than the recipe suggests.','Mix the purple first, then dilute a little at a time on white paper.').replace('Start with plenty of white and add the coloured mix slowly.','Start with a pale wash and add colour gradually.').replace('Leave out some white for a deeper colour.','Use less water for a deeper colour.'):r.adjust,content);add('p',r.finish,content);$('under-note').textContent=medium==='watercolour'?'Keep white watercolour paper showing for the brightest light. A pale related wash can be a first layer; let it dry before adding more.':'Try a white or light, properly prepared surface for brighter colours. A pale related base can shift a transparent top layer. Use a ground suited to your paint; oil needs an oil-compatible preparation.';}
+function showRecipe(){const medium=$('paint-type').value,r=recipeFor(chosen,medium),root=$('recipe');root.replaceChildren();[...$('recipe-picker').children].forEach((b,i)=>b.setAttribute('aria-pressed',String(i===chosen)));const swatch=add('div','',root,'recipe-result');swatch.style.background=r.hex;swatch.setAttribute('aria-hidden','true');const content=add('div','',root);add('h3',r.name,content);add('p','Start with',content,'small');add('p',r.formula,content,'formula');add('p',medium==='watercolour'?(recipes[chosen].waterAdjust||r.adjust):r.adjust,content);add('p',r.finish,content);$('under-note').textContent=medium==='watercolour'?'Keep white watercolour paper showing for the brightest light. A pale related wash can be a first layer; let it dry before adding more.':'Try a white or light, properly prepared surface for brighter colours. A pale related base can shift a transparent top layer. Use a ground suited to your paint; oil needs an oil-compatible preparation.';}
 $('paint-type').addEventListener('change',showRecipe);$('base-hue').addEventListener('change',palette);$('harmony').addEventListener('change',palette);palette();showRecipe();
 })();
