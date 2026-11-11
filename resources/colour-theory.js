@@ -7,38 +7,38 @@ const recipes=[
   {
     "name": "Orange",
     "hex": "#e78a39",
-    "mix": "2 parts yellow + 1 part red",
-    "adjust": "More yellow makes it more golden. Add red a little at a time for a redder orange."
+    "mix": "2 parts warm yellow + 1 part warm red",
+    "adjust": "Warm yellow and warm red are a good starting pair for orange. Add more yellow for a golden orange or more red for a redder one."
   },
   {
     "name": "Green",
     "hex": "#769347",
-    "mix": "2 parts yellow + 1 part blue",
-    "adjust": "Start with yellow and add blue slowly. More yellow gives a yellower green; more blue gives a bluer green."
+    "mix": "2 parts cool yellow + 1 part blue",
+    "adjust": "Cool yellow is a good starting choice for a clearer green. Start with yellow and add blue slowly; your blue will also affect how bright it looks."
   },
   {
     "name": "Muted green",
     "hex": "#85804a",
-    "mix": "2 parts yellow + 1 part blue + a tiny touch of red",
+    "mix": "2 parts warm yellow + 1 part blue + a tiny touch of warm red",
     "adjust": "Mix the green first, then add red little by little to make it less bright."
   },
   {
     "name": "Blue-green",
     "hex": "#439fa0",
-    "mix": "2 parts blue + 1 part yellow",
+    "mix": "2 parts blue + 1 part cool yellow",
     "white": 3,
     "adjust": "More yellow makes it greener. More blue makes it bluer. Your paints may give a quieter colour than the swatch."
   },
   {
     "name": "Purple",
     "hex": "#86519e",
-    "mix": "1 part red + 1 part blue",
-    "adjust": "Add red for a redder purple or blue for a bluer one. Some basic reds and blues make a dull purple; that is the paint, not a mistake."
+    "mix": "1 part cool red + 1 part blue",
+    "adjust": "Cool red usually gives a clearer purple than warm red. Add more cool red or blue to adjust it. Your blue may still make the mix quieter than the swatch."
   },
   {
     "name": "Light purple",
     "hex": "#b7a2d2",
-    "mix": "1 part red + 1 part blue",
+    "mix": "1 part cool red + 1 part blue",
     "white": 6,
     "adjust": "Mix the purple first, then add a little of it to the white until you like the colour.",
     "waterAdjust": "Mix the purple first, then add water a little at a time and test on white paper."
@@ -46,15 +46,15 @@ const recipes=[
   {
     "name": "Pink",
     "hex": "#df9bac",
-    "mix": "1 part red",
+    "mix": "1 part cool red",
     "white": 5,
-    "adjust": "Add a little red to the white, not all at once. Add more red for a stronger pink.",
-    "waterAdjust": "Dilute the red with water for a pale wash. Your red may make a warmer or cooler pink."
+    "adjust": "Add a little cool red to white for pink. Try warm red instead for a warmer, more coral pink.",
+    "waterAdjust": "Dilute cool red with water for a pale pink wash. Try warm red for a warmer, more coral pink."
   },
   {
     "name": "Peach",
     "hex": "#e3b391",
-    "mix": "2 parts yellow + 1 part red",
+    "mix": "2 parts warm yellow + 1 part warm red",
     "white": 8,
     "adjust": "Make orange first, then add a little to the white. This gives a light orange, not a colour for every skin tone.",
     "waterAdjust": "Make orange first, then dilute with water for a pale wash. This is not a colour for every skin tone."
@@ -62,14 +62,14 @@ const recipes=[
   {
     "name": "Red-brown",
     "hex": "#b56e54",
-    "mix": "2 parts red + 1 part yellow + a tiny touch of blue",
+    "mix": "2 parts warm red + 1 part warm yellow + a tiny touch of blue",
     "white": 1,
     "adjust": "Make a red-orange first. Add blue slowly to quieten it. Add more red if it becomes too grey."
   },
   {
     "name": "Brown",
     "hex": "#80624c",
-    "mix": "1 part red + 1 part yellow + 1 part blue",
+    "mix": "1 part warm red + 1 part warm yellow + 1 part blue",
     "adjust": "Start with red and yellow, then add the blue gradually; you may not need all of it. More red or yellow warms the brown."
   },
   {

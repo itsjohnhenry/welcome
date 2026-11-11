@@ -3,7 +3,7 @@
 <title>Colour theory — John Henry</title><meta name="description" content="Simple colour definitions, colour suggestions and practical starting recipes for mixing paint.">
 <link rel="icon" href="../images/favicon.png"><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../style.css"><link rel="stylesheet" href="resources.css"><link rel="stylesheet" href="colour-theory.css">
-<script src="colour-theory.js?v=basic-colours-1" defer></script></head>
+<script src="colour-theory.js?v=warm-cool-1" defer></script></head>
 <body class="resource-page colour-page"><canvas id="c" aria-hidden="true"></canvas>
 <header><a class="brand" href="../">John Henry</a><nav class="site-nav" aria-label="Main navigation"><a class="contact-button" href="./">Resources</a><a class="contact-button" href="../#contact">Contact</a></nav></header>
 <main><div class="intro textstyle"><h1>Make colour<br>work for you.</h1><p>Choose a colour. Find a mix.</p></div>
@@ -14,8 +14,9 @@
 </section><section class="workspace" id="suggestions" aria-label="Colour suggestions"><div class="split palette-lab"><div><h2>Choose colours that work together.</h2><label for="base-hue">Start with a colour</label><select id="base-hue"></select><label for="harmony">Choose a relationship</label><select id="harmony"><option value="neighbours">Neighbours — a close family</option><option value="opposite">Opposites — strong contrast</option><option value="split">Split opposites — a softer contrast</option><option value="triad">Three spaced colours — variety</option><option value="single">One hue — light to dark</option></select><p id="harmony-note"></p></div><div><div id="palette" class="palette" aria-label="Suggested colour palette"></div><p class="small">This is a traditional red–yellow–blue artist’s wheel, not a paint-mixing calculator. Pigments behave differently from screen colours.</p><p>Let one colour take up most of the space. Use another in smaller areas, and save your strongest contrast for the part you want people to notice.</p></div></div>
 </section>
 <section class="workspace" id="mixing" aria-labelledby="mixing-title"><h2 id="mixing-title">How do I mix this colour?</h2>
-<p>Pick a colour. Every recipe uses only red, yellow, blue, white or black.</p><div id="recipe-picker" class="recipe-picker" role="group" aria-label="Choose a colour to mix"></div>
+<p>Pick a colour. Use your warm and cool reds and yellows, plus blue, white and black.</p><div id="recipe-picker" class="recipe-picker" role="group" aria-label="Choose a colour to mix"></div>
 <div class="mix-controls"><label for="paint-type">What are you using?</label><select id="paint-type"><option value="opaque">Acrylic, oil or gouache</option><option value="watercolour">Watercolour</option></select></div>
+<details><summary>Which red or yellow should I use?</summary><p><strong>Warm red</strong> leans towards orange; <strong>cool red</strong> leans towards pink or purple. <strong>Warm yellow</strong> leans towards orange; <strong>cool yellow</strong> leans towards green.</p><p>Try warm red + warm yellow for orange, cool yellow + blue for green, and cool red + blue for purple. These are starting choices, not guarantees: your blue and the strength of each paint still matter.</p></details>
 <div id="recipe" class="recipe" aria-live="polite" aria-atomic="true"></div>
 <p class="small">A “part” is the same-sized dab each time. These are rough starting mixes, not exact matches to the screen. Add the stronger colour slowly and test a small amount first. Use paints from the same medium.</p>
 <details><summary>What should I paint underneath?</summary><p id="under-note"></p><p>For colour showing through gaps, try a small patch of a muted opposite underneath. A transparent layer over an opposite can become duller; a solid, opaque layer will hide it.</p></details>
