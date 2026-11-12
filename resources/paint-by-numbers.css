@@ -1,0 +1,15 @@
+.paint-page header a{text-shadow:0 1px 3px #000,0 0 5px #000}.paint-page header a:hover{text-shadow:none}
+.paint-page .workspace{background:rgba(255,255,255,.96)}
+.maker{display:grid;grid-template-columns:minmax(240px,340px) minmax(0,1fr);gap:2.5rem;align-items:start}
+.settings fieldset{border:0;margin:0;padding:0;min-width:0}.settings label{display:block;font-weight:500;font-size:.95rem;margin:1.25rem 0 .5rem}.settings output{float:right;font-variant-numeric:tabular-nums}
+.settings input[type=file]{width:100%;font:inherit;font-size:.9rem}.settings input[type=file]::file-selector-button{padding:.65rem;margin-right:.5rem;cursor:pointer}
+.settings input[type=range]{width:100%;accent-color:#222;min-height:28px}.settings select{width:100%;padding:.7rem;font:inherit;font-size:.95rem;background:white;color:#111;border:1px solid #888;border-radius:4px}
+.settings .compact{margin:.75rem 0}.settings .compact button{font-size:.85rem;padding:.65rem}.settings .helper{color:#444}.paint-page #message{color:#222;font-size:.95rem;line-height:1.5;min-height:3em}
+.preview-heading{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:.5rem}.preview-heading span{font-size:.85rem;color:#555}.preview-heading h2{font-size:1.5rem}
+.view-switch{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1rem}.view-switch button{font-size:.8rem;padding:.6rem;background:transparent;color:#222;border-color:#aaa}.view-switch button[aria-pressed=true]{background:#222;color:white}
+.page-stage{position:relative;max-width:650px;margin:auto;background:#ddd;padding:12px;border-radius:5px}
+.paint-page #sheet{position:static;width:100%;height:auto;z-index:auto;background:white;box-shadow:0 2px 6px #0002;touch-action:none;cursor:grab}.paint-page #sheet.dragging{cursor:grabbing}
+#empty{position:absolute;left:10%;right:10%;top:40%;text-align:center;color:#777;pointer-events:none}
+#colour-key{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:.6rem} .key-chip{display:flex;align-items:center;gap:.5rem;font-size:.85rem}.key-chip i{width:30px;height:30px;display:block;border:1px solid #0004;border-radius:3px}
+@media(max-width:1100px){.maker{grid-template-columns:1fr}.settings{max-width:650px;width:100%;margin:auto}.preview-panel{min-width:0}}
+@media(max-width:600px){.paint-page{padding:5rem 1rem 2rem}.maker{gap:1.5rem}.page-stage{padding:6px}.preview-heading h2{font-size:1.3rem}}
