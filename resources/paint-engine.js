@@ -24,10 +24,10 @@ export function processImage({rgba,w,h,count=10,detail='balanced'}){
   let ids=new Int16Array(w*h).fill(-1);
   for(let i=0;i<ids.length;i++)if(rgba[i*4+3]>127){const s=[rgba[i*4],rgba[i*4+1],rgba[i*4+2]];let best=0,d=Infinity;palette.forEach((c,k)=>{const n=distance(c,s);if(n<d){d=n;best=k;}});ids[i]=best;}
   // Majority filtering reduces isolated pixels without spreading into blank paper.
-  for(let pass=0;pass<(detail==='fine'?1:3);pass++){
+  for(let pass=0;pass<(detail==='fine'?0:3);pass++){
     const out=ids.slice();for(let y=1;y<h-1;y++)for(let x=1;x<w-1;x++){let p=y*w+x;if(ids[p]<0)continue;const freq=new Uint8Array(palette.length);for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){const c=ids[p+dy*w+dx];if(c>=0)freq[c]++;}let best=ids[p];for(let k=0;k<freq.length;k++)if(freq[k]>freq[best])best=k;out[p]=best;}ids=out;
   }
-  const minArea=detail==='simple'?150:detail==='fine'?24:70;
+  const minArea=detail==='simple'?150:detail==='fine'?36:70;
   // Merge small connected pieces into a touching colour. Recompute after each pass.
   for(let pass=0;pass<8;pass++){
     const {regions,map}=regionsOf(ids,w,h);let changes=0;

@@ -41,16 +41,16 @@ sheet.addEventListener('pointermove',e=>{if(!drag)return;const f=frame();$('move
 function stopDrag(){if(!drag)return;drag=null;sheet.classList.remove('dragging');message('Image moved. Make the pattern when you are ready.');}sheet.addEventListener('pointerup',stopDrag);sheet.addEventListener('pointercancel',stopDrag);
 $('generate').addEventListener('click',()=>{
   if(!image)return;invalidate();message('Finding colours and simplifying shapes…');$('generate').disabled=true;
-  const p=page(),ratio=(p.width-24)/(p.height-30),w=ratio>1?440:Math.round(440*ratio),h=ratio>1?Math.round(440/ratio):440;
+  const p=page(),ratio=(p.width-24)/(p.height-30),edge=$('detail').value==='fine'?1320:440,w=ratio>1?edge:Math.round(edge*ratio),h=ratio>1?Math.round(edge/ratio):edge;
   const input=document.createElement('canvas');input.width=w;input.height=h;const c=input.getContext('2d',{willReadFrequently:true}),f=frame(),pos=placement(f);
   c.drawImage(image,(pos.x-f.x)/f.w*w,(pos.y-f.y)/f.h*h,pos.w/f.w*w,pos.h/f.h*h);
   const rgba=c.getImageData(0,0,w,h).data;
   // Composite translucent image pixels on white; empty paper stays outside the pattern.
   for(let i=0;i<rgba.length;i+=4)if(rgba[i+3]>127){const a=rgba[i+3]/255;for(let j=0;j<3;j++)rgba[i+j]=Math.round(rgba[i+j]*a+255*(1-a));rgba[i+3]=255;}
-  try{worker=new Worker(new URL('./paint-worker.js',import.meta.url),{type:'module'});
+  try{worker=new Worker(new URL('./paint-worker.js?v=detail-2',import.meta.url),{type:'module'});
     worker.onmessage=({data})=>{worker?.terminate();worker=null;$('generate').disabled=false;if(data.error){message(data.error);return;}result=data.result;reference=document.createElement('canvas');reference.width=w;reference.height=h;const rc=reference.getContext('2d'),pixels=rc.createImageData(w,h);for(let i=0;i<result.ids.length;i++){const colour=result.ids[i]<0?[255,255,255]:result.colours[result.ids[i]];pixels.data.set([...colour,255],i*4);}rc.putImageData(pixels,0,0);
       $('colour-key').replaceChildren(...result.colours.map((c,i)=>{const item=document.createElement('div');item.className='key-chip';const swatch=document.createElement('i');swatch.style.background=`rgb(${c.join(',')})`;swatch.setAttribute('aria-hidden','true');item.append(swatch,document.createTextNode(`${i+1} · #${c.map(v=>v.toString(16).padStart(2,'0')).join('').toUpperCase()}`));return item;}));
-      document.querySelectorAll('[data-view]').forEach(b=>b.disabled=false);$('download-area').hidden=false;chooseView('outline');const tiny=result.labels.filter(l=>l.clearance<3).length;message(`Ready: ${result.colours.length} colours and ${result.labels.length} shapes.${tiny?' Some spaces are small; choose larger shapes if the numbers are hard to read.':''}`);
+      document.querySelectorAll('[data-view]').forEach(b=>b.disabled=false);$('download-area').hidden=false;chooseView('outline');const tiny=result.labels.filter(l=>l.clearance*(p.width-24)/w<1.2).length;message(`Ready: ${result.colours.length} colours and ${result.labels.length} shapes.${tiny?' Some spaces are small; choose larger shapes if the numbers are hard to read.':''}`);
     };worker.onerror=()=>{worker?.terminate();worker=null;$('generate').disabled=false;message('The pattern could not be made. Try a smaller image or fewer colours.');};worker.postMessage({rgba,w,h,count:Number($('colours').value),detail:$('detail').value},[rgba.buffer]);
   }catch{$('generate').disabled=false;message('Your browser could not start the image tool. Try a current version of Chrome, Firefox, Edge or Safari.');}
 });
