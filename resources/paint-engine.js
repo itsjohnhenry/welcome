@@ -24,12 +24,12 @@ export function processImage({rgba,w,h,count=10,detail='balanced'}){
   let ids=new Int16Array(w*h).fill(-1);
   for(let i=0;i<ids.length;i++)if(rgba[i*4+3]>127){const s=[rgba[i*4],rgba[i*4+1],rgba[i*4+2]];let best=0,d=Infinity;palette.forEach((c,k)=>{const n=distance(c,s);if(n<d){d=n;best=k;}});ids[i]=best;}
   // Majority filtering reduces isolated pixels without spreading into blank paper.
-  for(let pass=0;pass<(detail==='fine'?0:3);pass++){
+  for(let pass=0;pass<(detail==='fine'||detail==='pixel'?0:3);pass++){
     const out=ids.slice();for(let y=1;y<h-1;y++)for(let x=1;x<w-1;x++){let p=y*w+x;if(ids[p]<0)continue;const freq=new Uint8Array(palette.length);for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){const c=ids[p+dy*w+dx];if(c>=0)freq[c]++;}let best=ids[p];for(let k=0;k<freq.length;k++)if(freq[k]>freq[best])best=k;out[p]=best;}ids=out;
   }
   const minArea=detail==='simple'?150:detail==='fine'?36:70;
   // Merge small connected pieces into a touching colour. Recompute after each pass.
-  for(let pass=0;pass<8;pass++){
+  for(let pass=0;pass<(detail==='pixel'?0:8);pass++){
     const {regions,map}=regionsOf(ids,w,h);let changes=0;
     for(let r=0;r<regions.length;r++){
       const reg=regions[r];
@@ -48,6 +48,7 @@ export function processImage({rgba,w,h,count=10,detail='balanced'}){
   const dist=new Uint16Array(ids.length),queue=new Int32Array(ids.length);let head=0,tail=0;
   for(let p=0;p<ids.length;p++){if(ids[p]<0)continue;const x=p%w,y=Math.floor(p/w);if(!x||x===w-1||!y||y===h-1||ids[p-1]!==ids[p]||ids[p+1]!==ids[p]||ids[p-w]!==ids[p]||ids[p+w]!==ids[p]){dist[p]=1;queue[tail++]=p;}}
   while(head<tail){const p=queue[head++],x=p%w,y=Math.floor(p/w);for(const n of [x?p-1:-1,x<w-1?p+1:-1,y?p-w:-1,y<h-1?p+w:-1])if(n>=0&&map[n]===map[p]&&!dist[n]){dist[n]=dist[p]+1;queue[tail++]=n;}}
+  if(detail==='pixel'){const labels=[];for(let p=0;p<ids.length;p++)if(ids[p]>=0)labels.push({x:p%w+.5,y:Math.floor(p/w)+.5,colour:ids[p],clearance:.5,area:1});return {w,h,ids,colours,labels};}
   const labels=regions.map(r=>{let best=r.pixels[0];for(const p of r.pixels)if(dist[p]>dist[best])best=p;return {x:best%w+.5,y:Math.floor(best/w)+.5,colour:r.colour,clearance:dist[best],area:r.pixels.length};});
   return {w,h,ids,colours,labels};
 }

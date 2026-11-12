@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pixel art — John Henry</title><meta name="description" content="Turn an image into an A3 pixel-art grid with numbered rows, columns and a colour key.">
+<link rel="icon" href="../images/favicon.png"><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css"><link rel="stylesheet" href="resources.css"><link rel="stylesheet" href="paint-by-numbers.css">
+<script type="module" src="paint-by-numbers.js?v=pixel-1"></script></head>
+<body class="resource-page paint-page" data-tool="pixel"><canvas id="c" aria-hidden="true"></canvas>
+<header><a class="brand" href="../">John Henry</a><nav class="site-nav" aria-label="Main navigation"><a class="contact-button" href="./">Resources</a><a class="contact-button" href="../#contact">Contact</a></nav></header>
+<main><div class="intro textstyle"><h1>Small squares.<br>Big possibilities.</h1><p>Make an A3 pixel-art grid from your image.</p></div>
+<section class="workspace maker" aria-label="Pixel art maker">
+<div class="settings"><h2>Start with an image.</h2>
+<label for="upload">Choose a photo or artwork</label><input id="upload" type="file" accept="image/jpeg,image/png,image/webp,image/avif">
+<p class="helper">JPG, PNG, WebP or AVIF · up to 20 MB. Clear shapes and simple backgrounds work best.</p>
+<p class="helper">Your image stays in this browser. Refreshing clears it.</p>
+<fieldset id="settings" disabled><legend>Image and pattern settings</legend>
+<label for="orientation">A3 page</label><select id="orientation"><option value="portrait">Portrait — 297 × 420 mm</option><option value="landscape">Landscape — 420 × 297 mm</option></select>
+<div class="actions compact"><button id="fit" type="button" class="secondary">Fit image</button><button id="fill" type="button" class="secondary">Fill space</button></div>
+<label for="scale">Image size <output id="scale-value">100%</output></label><input type="range" id="scale" min="20" max="300" value="100">
+<label for="rotation">Rotation <output id="rotation-value">0°</output></label><input type="range" id="rotation" min="-180" max="180" value="0"><div class="actions compact"><button id="rotate-left" type="button" class="secondary">↶ 90° left</button><button id="rotate-right" type="button" class="secondary">↷ 90° right</button></div>
+<label for="move-x">Move left / right</label><input type="range" id="move-x" min="-100" max="100" value="0">
+<label for="move-y">Move up / down</label><input type="range" id="move-y" min="-100" max="100" value="0">
+<p class="helper">Drag the image on the page, or use the sliders. Anything outside the inner frame is cropped.</p>
+<label for="colours">Number of colours <output id="colours-value">10</output></label><input type="range" id="colours" min="4" max="20" value="10">
+<label for="detail">Grid detail</label><select id="detail"><option value="24">Simple — 24 squares on the long side</option><option value="40" selected>Medium — 40 squares on the long side</option><option value="64">Detailed — 64 squares on the long side</option><option value="96">Very detailed — 96 squares on the long side</option></select><p class="helper">More squares keep more detail. Every row and column is numbered, starting at the top left. Each square's number matches the colour key.</p>
+<div class="actions"><button id="generate" type="button">Make pattern</button><button id="clear" type="button" class="secondary">Clear image</button></div>
+</fieldset><p id="message" role="status" aria-live="polite">Choose an image to begin.</p>
+</div>
+<div class="preview-panel"><div class="preview-heading"><h2>Your A3 page</h2><span id="page-size">297 × 420 mm</span></div>
+<div class="view-switch" role="group" aria-label="Preview view"><button type="button" data-view="image" aria-pressed="true">Position image</button><button type="button" data-view="outline" aria-pressed="false" disabled>Numbered grid</button><button type="button" data-view="colour" aria-pressed="false" disabled>Colour reference</button></div>
+<div class="page-stage"><canvas id="sheet" width="840" height="1188" aria-label="A3 image placement preview"></canvas><p id="empty">Your image goes here</p></div>
+<div id="download-area" hidden><div class="actions"><button type="button" id="download">Download A3 PDF ↗</button></div><p class="helper">Two pages: a numbered square grid, then a colour reference and key. Print on A3 at 100% / actual size. Blank areas are left unpainted.</p><div id="colour-key" aria-label="Numbered colour key"></div><p class="helper">The key shows colours to aim for, not exact paint recipes.</p></div>
+</div></section></main><script type="module" src="../script.js"></script></body></html>
